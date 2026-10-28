@@ -136,16 +136,12 @@ const ShopWithSidebar = () => {
       return matchesCategory && matchesBrand && matchesAttribute;
     });
 
-    // Sorting Logic
     return result.sort((a, b) => {
       if (sortOption === "1") {
-        // Best Selling / Popularity
         return (b.reviews || 0) - (a.reviews || 0);
       } else if (sortOption === "2") {
-        // Old Products
         return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
       } else {
-        // Latest Products (Default: "0")
         return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
       }
     });
@@ -216,7 +212,6 @@ const ShopWithSidebar = () => {
 
               <form onSubmit={(e) => e.preventDefault()}>
                 <div className="flex flex-col gap-6">
-                  {/* <!-- filter box --> */}
                   <div className="bg-white shadow-1 rounded-lg py-4 px-5">
                     <div className="flex items-center justify-between">
                       <p className="font-medium text-dark">Filters:</p>
@@ -226,14 +221,12 @@ const ShopWithSidebar = () => {
                     </div>
                   </div>
 
-                  {/* <!-- category box --> */}
                   <CategoryDropdown
                     selectedCategory={selectedCategory}
                     onSelectCategory={(cats) => setSelectedCategory(cats)}
                     products={products}
                   />
 
-                  {/* <!-- brand box --> */}
                   <BrandDropdown
                     selectedBrands={selectedBrands}
                     onSelectBrand={(brands) => setSelectedBrands(brands)}
@@ -248,7 +241,6 @@ const ShopWithSidebar = () => {
             <div className="xl:max-w-[870px] w-full">
               <div className="rounded-lg bg-white shadow-1 pl-3 pr-2.5 py-2.5 mb-6">
                 <div className="flex items-center justify-between">
-                  {/* <!-- top bar left --> */}
                   <div className="flex flex-wrap items-center gap-4">
                     <select
                       value={sortOption}
@@ -267,7 +259,6 @@ const ShopWithSidebar = () => {
                     </p>
                   </div>
 
-                  {/* <!-- top bar right --> */}
                   <div className="flex items-center gap-2.5">
                     <button
                       onClick={() => setProductStyle("grid")}
@@ -295,42 +286,36 @@ const ShopWithSidebar = () => {
                 </div>
               </div>
 
-              {/* <!-- Products Grid Tab Content Start --> */}
-              <div
-                className={`${
-                  productStyle === "grid"
-                    ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-7.5 gap-y-9"
-                    : "flex flex-col gap-7.5"
-                }`}
-              >
-                {isLoading ? (
-                  // Loading Skeletons
-                  Array.from({ length: 6 }).map((_, index) => (
-                    <div key={index} className={productStyle === "grid" ? "group animate-pulse" : "group rounded-lg bg-white shadow-1 animate-pulse p-4"}>
-                      <div className="relative overflow-hidden flex items-center justify-center rounded-lg bg-gray-2 min-h-[270px] mb-4" />
-                      <div className="space-y-3">
-                        <div className="h-4 bg-gray-2 rounded w-1/3"></div>
-                        <div className="h-5 bg-gray-2 rounded w-3/4"></div>
-                        <div className="h-6 bg-gray-2 rounded w-1/2"></div>
-                      </div>
-                    </div>
-                  ))
-                ) : filteredProducts.length > 0 ? (
-                  filteredProducts.map((item, key) =>
-                    productStyle === "grid" ? (
-                      <SingleGridItem item={item} key={key} />
-                    ) : (
-                      <SingleListItem item={item} key={key} />
+              {/* <!-- Products Content Section --> */}
+              {isLoading ? (
+                // Explicit Loading Spinner & Centered Icon Box
+                <div className="flex flex-col items-center justify-center py-28 bg-white rounded-lg shadow-sm w-full">
+                  <div className="w-12 h-12 border-4 border-blue border-t-transparent rounded-full animate-spin mb-4"></div>
+                  <p className="text-dark font-medium text-base">Loading products, please wait...</p>
+                </div>
+              ) : (
+                <div
+                  className={`${
+                    productStyle === "grid"
+                      ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-7.5 gap-y-9"
+                      : "flex flex-col gap-7.5"
+                  }`}
+                >
+                  {filteredProducts.length > 0 ? (
+                    filteredProducts.map((item, key) =>
+                      productStyle === "grid" ? (
+                        <SingleGridItem item={item} key={key} />
+                      ) : (
+                        <SingleListItem item={item} key={key} />
+                      )
                     )
-                  )
-                ) : (
-                  <div className="col-span-full text-center py-20 bg-white rounded-lg shadow-sm">
-                    <h3 className="text-xl font-semibold text-gray-700">No products found matching your filters.</h3>
-                  </div>
-                )}
-              </div>
-              {/* <!-- Products Grid Tab Content End --> */}
-
+                  ) : (
+                    <div className="col-span-full text-center py-20 bg-white rounded-lg shadow-sm">
+                      <h3 className="text-xl font-semibold text-gray-700">No products found matching your filters.</h3>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             {/* // <!-- Content End --> */}
           </div>
