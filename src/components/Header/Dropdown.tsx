@@ -1,63 +1,48 @@
-import { useState } from "react";
-import { usePathname } from "next/navigation";
+"use client";
 import Link from "next/link";
+import React, { useState } from "react";
+import { usePathname } from "next/navigation";
 
-const Dropdown = ({ menuItem, stickyMenu }) => {
+const Dropdown = ({ menuItem, stickyMenu }: { menuItem: any; stickyMenu?: boolean }) => {
   const [dropdownToggler, setDropdownToggler] = useState(false);
   const pathUrl = usePathname();
 
   return (
-    <li
-      onClick={() => setDropdownToggler(!dropdownToggler)}
-      className={`group relative before:w-0 before:h-[3px] before:bg-blue before:absolute before:left-0 before:top-0 before:rounded-b-[3px] before:ease-out before:duration-200 hover:before:w-full ${
-        pathUrl.includes(menuItem.title) && "before:!w-full"
-      }`}
-    >
-      <a
-        href="#"
-        className={`hover:text-blue text-custom-sm font-medium text-dark flex items-center gap-1.5 capitalize ${
-          stickyMenu ? "xl:py-4" : "xl:py-6"
-        } ${pathUrl.includes(menuItem.title) && "!text-blue"}`}
+    <li className="relative group">
+      <button
+        onClick={() => setDropdownToggler(!dropdownToggler)}
+        className={`flex items-center justify-between gap-1.5 py-3 text-custom-sm font-medium ${
+          stickyMenu ? "text-dark" : "text-white"
+        } hover:text-blue w-full`}
       >
-        {menuItem.title}
-        <svg
-          className="fill-current cursor-pointer"
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M2.95363 5.67461C3.13334 5.46495 3.44899 5.44067 3.65866 5.62038L7.99993 9.34147L12.3412 5.62038C12.5509 5.44067 12.8665 5.46495 13.0462 5.67461C13.2259 5.88428 13.2017 6.19993 12.992 6.37964L8.32532 10.3796C8.13808 10.5401 7.86178 10.5401 7.67453 10.3796L3.00787 6.37964C2.7982 6.19993 2.77392 5.88428 2.95363 5.67461Z"
-            fill=""
-          />
+        {menuItem?.title || "Menu"}
+        {/* Dropdown arrow icon */}
+        <svg className="fill-current" width="12" height="12" viewBox="0 0 12 12">
+          <path d="M2.25 4.5L6 8.25L9.75 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-      </a>
+      </button>
 
-      {/* <!-- Dropdown Start --> */}
-      <ul
-        className={`dropdown ${dropdownToggler && "flex"} ${
-          stickyMenu
-            ? "xl:group-hover:translate-y-0"
-            : "xl:group-hover:translate-y-0"
-        }`}
-      >
-        {menuItem.submenu.map((item, i) => (
-          <li key={i}>
-            <Link
-              href={item.path}
-              className={`flex text-custom-sm hover:text-blue hover:bg-gray-1 py-[7px] px-4.5 ${
-                pathUrl === item.path && "text-blue bg-gray-1"
-              } `}
-            >
-              {item.title}
-            </Link>
-          </li>
-        ))}
-      </ul>
+      {/* Dropdown submenu items */}
+      {menuItem?.submenu && (
+        <ul
+          className={`dropdown-submenu ${
+            dropdownToggler ? "block" : "hidden"
+          } lg:group-hover:block lg:absolute lg:top-full lg:left-0 lg:w-48 bg-white shadow-md rounded-md py-2 z-50`}
+        >
+          {menuItem.submenu.map((subItem: any, index: number) => (
+            <li key={index}>
+              <Link
+                href={subItem.path || "#"}
+                className={`block px-4 py-2 text-sm text-dark hover:text-blue transition-colors ${
+                  pathUrl === subItem.path ? "text-blue font-semibold" : ""
+                }`}
+              >
+                {subItem.title}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </li>
   );
 };
