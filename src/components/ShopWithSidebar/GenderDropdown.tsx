@@ -1,13 +1,25 @@
 "use client";
 import React, { useState } from "react";
 
-const GenderItem = ({ category }) => {
+interface CategoryItem {
+  id?: string | number;
+  name: string;
+  products?: number | string;
+  [key: string]: any;
+}
+
+interface GenderItemProps {
+  category: CategoryItem;
+}
+
+const GenderItem: React.FC<GenderItemProps> = ({ category }) => {
   const [selected, setSelected] = useState(false);
   return (
     <button
+      type="button"
       className={`${
         selected && "text-blue"
-      } group flex items-center justify-between ease-out duration-200 hover:text-blue `}
+      } group flex items-center justify-between ease-out duration-200 hover:text-blue w-full cursor-pointer`}
       onClick={() => setSelected(!selected)}
     >
       <div className="flex items-center gap-2">
@@ -39,8 +51,8 @@ const GenderItem = ({ category }) => {
 
       <span
         className={`${
-          selected ? "text-white bg-blue" : "bg-gray-2"
-        } inline-flex rounded-[30px] text-custom-xs px-2 ease-out duration-200 group-hover:text-white group-hover:bg-blue`}
+          selected ? "text-white bg-blue" : "bg-gray-2 text-dark"
+        } inline-flex rounded-[30px] text-custom-xs px-2 py-0.5 ease-out duration-200 group-hover:text-white group-hover:bg-blue`}
       >
         {category.products}
       </span>
@@ -48,7 +60,11 @@ const GenderItem = ({ category }) => {
   );
 };
 
-const GenderDropdown = ({ genders }) => {
+interface GenderDropdownProps {
+  genders: CategoryItem[];
+}
+
+const GenderDropdown: React.FC<GenderDropdownProps> = ({ genders }) => {
   const [toggleDropdown, setToggleDropdown] = useState(true);
 
   return (
@@ -59,11 +75,15 @@ const GenderDropdown = ({ genders }) => {
           toggleDropdown && "shadow-filter"
         }`}
       >
-        <p className="text-dark">Gender</p>
+        <p className="text-dark font-medium">Gender</p>
         <button
-          onClick={() => setToggleDropdown(!toggleDropdown)}
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setToggleDropdown(!toggleDropdown);
+          }}
           aria-label="button for gender dropdown"
-          className={`text-dark ease-out duration-200 ${
+          className={`text-dark ease-out duration-200 cursor-pointer ${
             toggleDropdown && "rotate-180"
           }`}
         >
@@ -91,9 +111,10 @@ const GenderDropdown = ({ genders }) => {
           toggleDropdown ? "flex" : "hidden"
         }`}
       >
-        {genders.map((gender, key) => (
-          <GenderItem key={key} category={gender} />
-        ))}
+        {Array.isArray(genders) &&
+          genders.map((gender, key) => (
+            <GenderItem key={key} category={gender} />
+          ))}
       </div>
     </div>
   );
