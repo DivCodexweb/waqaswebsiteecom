@@ -6,6 +6,7 @@ import CategoryDropdown from "./CategoryDropdown";
 import SingleGridItem from "../Shop/SingleGridItem";
 import SingleListItem from "../Shop/SingleListItem";
 import BrandDropdown from "./BrandDropdown";
+
 const ShopWithSidebar = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -15,21 +16,23 @@ const ShopWithSidebar = () => {
   const [productSidebar, setProductSidebar] = useState(false);
   const [stickyMenu, setStickyMenu] = useState(false);
 
-  // Data States
+  // Data States & Loading State
   const [products, setProducts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Filter States synced with URL query params (Multiple categories support via array)
+  // Filter States synced with URL query params
   const [selectedCategory, setSelectedCategory] = useState<string[]>(
     searchParams.get("category") ? searchParams.get("category")!.split(",") : []
   );
   const [selectedGender, setSelectedGender] = useState(searchParams.get("gender") || "");
   const [sortOption, setSortOption] = useState(searchParams.get("sort") || "0");
-const [selectedBrands, setSelectedBrands] = useState<string[]>(
-  searchParams.get("brand") ? searchParams.get("brand")!.split(",") : []
-);
-const [selectedAttributes, setSelectedAttributes] = useState<string[]>(
-  searchParams.get("attribute") ? searchParams.get("attribute")!.split(",") : []
-);
+  const [selectedBrands, setSelectedBrands] = useState<string[]>(
+    searchParams.get("brand") ? searchParams.get("brand")!.split(",") : []
+  );
+  const [selectedAttributes, setSelectedAttributes] = useState<string[]>(
+    searchParams.get("attribute") ? searchParams.get("attribute")!.split(",") : []
+  );
+
   const handleStickyMenu = () => {
     if (window.scrollY >= 80) {
       setStickyMenu(true);
@@ -41,8 +44,9 @@ const [selectedAttributes, setSelectedAttributes] = useState<string[]>(
   // Fetch Products from Database API
   useEffect(() => {
     async function fetchData() {
+      setIsLoading(true);
       try {
-        const prodRes = await fetch("/api/admin/products"); // ya apka jo products API endpoint ho
+        const prodRes = await fetch("/api/admin/products");
         if (prodRes.ok) {
           const prodData = await prodRes.json();
           setProducts(Array.isArray(prodData) ? prodData : prodData.products || prodData.data || []);
@@ -50,6 +54,8 @@ const [selectedAttributes, setSelectedAttributes] = useState<string[]>(
       } catch (err) {
         console.error("Failed to fetch products", err);
         setProducts([]);
+      } finally {
+        setIsLoading(false);
       }
     }
     fetchData();
@@ -59,18 +65,19 @@ const [selectedAttributes, setSelectedAttributes] = useState<string[]>(
   useEffect(() => {
     const params = new URLSearchParams();
     if (selectedCategory.length > 0) params.set("category", selectedCategory.join(","));
+    if (selectedBrands.length > 0) params.set("brand", selectedBrands.join(","));
+    if (selectedAttributes.length > 0) params.set("attribute", selectedAttributes.join(","));
     if (selectedGender) params.set("gender", selectedGender);
     if (sortOption) params.set("sort", sortOption);
 
     startTransition(() => {
       router.push(`?${params.toString()}`, { scroll: false });
     });
-  }, [selectedCategory, selectedGender, sortOption, router]);
+  }, [selectedCategory, selectedBrands, selectedAttributes, selectedGender, sortOption, router]);
 
   useEffect(() => {
     window.addEventListener("scroll", handleStickyMenu);
 
-    // closing sidebar while clicking outside
     function handleClickOutside(event: MouseEvent) {
       if (!(event.target as HTMLElement).closest(".sidebar-content")) {
         setProductSidebar(false);
@@ -87,51 +94,62 @@ const [selectedAttributes, setSelectedAttributes] = useState<string[]>(
     };
   }, [productSidebar]);
 
-  // Filter & Sort Products Logic (Multiple Categories support)
-const filteredProducts = useMemo(() => {
-  if (!Array.isArray(products)) return [];
+  // Filter & Sort Products Logic
+  const filteredProducts = useMemo(() => {
+    if (!Array.isArray(products)) return [];
 
-  return products.filter((item) => {
-    // Category match
-    let matchesCategory = true;
-    if (selectedCategory.length > 0) {
-      const itemCatId = item.categoriesId ?? item.categoryId ?? item.category_id ?? item.category;
-      matchesCategory = itemCatId != null && selectedCategory.includes(itemCatId.toString());
-    }
+    const result = products.filter((item) => {
+      let matchesCategory = true;
+      if (selectedCategory.length > 0) {
+        const itemCatId = item.categoriesId ?? item.categoryId ?? item.category_id ?? item.category;
+        matchesCategory = itemCatId != null && selectedCategory.includes(itemCatId.toString());
+      }
 
-    // Brand match
-    let matchesBrand = true;
-    if (selectedBrands.length > 0) {
-      const itemBrandId = item.brandId ?? item.brand_id;
-      matchesBrand = itemBrandId != null && selectedBrands.includes(itemBrandId.toString());
-    }
+      let matchesBrand = true;
+      if (selectedBrands.length > 0) {
+        const itemBrandId = item.brandId ?? item.brand_id;
+        matchesBrand = itemBrandId != null && selectedBrands.includes(itemBrandId.toString());
+      }
 
-    // Attribute match
-    let matchesAttribute = true;
-    if (selectedAttributes.length > 0) {
-      if (!item.attributesList) {
-        matchesAttribute = false;
-      } else {
-        try {
-          const parsedAttrs = typeof item.attributesList === "string"
-            ? JSON.parse(item.attributesList)
-            : item.attributesList;
-
-          matchesAttribute = selectedAttributes.some((selectedAttr) => {
-            return parsedAttrs.some((attrVal: any) => {
-              if (typeof attrVal === "string") return attrVal.toLowerCase() === selectedAttr.toLowerCase();
-              return attrVal.name?.toLowerCase() === selectedAttr.toLowerCase() || attrVal.value?.toLowerCase() === selectedAttr.toLowerCase();
-            });
-          });
-        } catch {
+      let matchesAttribute = true;
+      if (selectedAttributes.length > 0) {
+        if (!item.attributesList) {
           matchesAttribute = false;
+        } else {
+          try {
+            const parsedAttrs = typeof item.attributesList === "string"
+              ? JSON.parse(item.attributesList)
+              : item.attributesList;
+
+            matchesAttribute = selectedAttributes.some((selectedAttr) => {
+              return parsedAttrs.some((attrVal: any) => {
+                if (typeof attrVal === "string") return attrVal.toLowerCase() === selectedAttr.toLowerCase();
+                return attrVal.name?.toLowerCase() === selectedAttr.toLowerCase() || attrVal.value?.toLowerCase() === selectedAttr.toLowerCase();
+              });
+            });
+          } catch {
+            matchesAttribute = false;
+          }
         }
       }
-    }
 
-    return matchesCategory && matchesBrand && matchesAttribute;
-  });
-}, [products, selectedCategory, selectedBrands, selectedAttributes, selectedGender, sortOption]);
+      return matchesCategory && matchesBrand && matchesAttribute;
+    });
+
+    // Sorting Logic
+    return result.sort((a, b) => {
+      if (sortOption === "1") {
+        // Best Selling / Popularity
+        return (b.reviews || 0) - (a.reviews || 0);
+      } else if (sortOption === "2") {
+        // Old Products
+        return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
+      } else {
+        // Latest Products (Default: "0")
+        return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+      }
+    });
+  }, [products, selectedCategory, selectedBrands, selectedAttributes, selectedGender, sortOption]);
 
   const options = [
     { label: "Latest Products", value: "0" },
@@ -139,28 +157,13 @@ const filteredProducts = useMemo(() => {
     { label: "Old Products", value: "2" },
   ];
 
-useEffect(() => {
-  const params = new URLSearchParams();
-  if (selectedCategory.length > 0) params.set("category", selectedCategory.join(","));
-  if (selectedBrands.length > 0) params.set("brand", selectedBrands.join(","));
-  if (selectedAttributes.length > 0) params.set("attribute", selectedAttributes.join(","));
-  if (selectedGender) params.set("gender", selectedGender);
-  if (sortOption) params.set("sort", sortOption);
-
-  startTransition(() => {
-    router.push(`?${params.toString()}`, { scroll: false });
-  });
-}, [selectedCategory, selectedBrands, selectedAttributes, selectedGender, sortOption, router]);
-
-// 4. Filter logic mein matchesBrand check lagayein
-
-
-const handleCleanAll = () => {
-  setSelectedCategory([]);
-  setSelectedBrands([]);
-  setSelectedGender("");
-  setSortOption("0");
-};
+  const handleCleanAll = () => {
+    setSelectedCategory([]);
+    setSelectedBrands([]);
+    setSelectedGender("");
+    setSelectedAttributes([]);
+    setSortOption("0");
+  };
 
   return (
     <>
@@ -175,8 +178,8 @@ const handleCleanAll = () => {
             <div
               className={`sidebar-content fixed xl:z-1 z-9999 left-0 top-0 xl:translate-x-0 xl:static max-w-[310px] xl:max-w-[270px] w-full ease-out duration-200 ${
                 productSidebar
-                  ? "translate-x-0 bg-white p-5 h-screen overflow-y-auto"
-                  : "-translate-x-full"
+                  ? "translate-x-0 bg-white p-5 h-screen overflow-y-auto shadow-lg"
+                  : "-translate-x-full xl:translate-x-0"
               }`}
             >
               <button
@@ -216,8 +219,8 @@ const handleCleanAll = () => {
                   {/* <!-- filter box --> */}
                   <div className="bg-white shadow-1 rounded-lg py-4 px-5">
                     <div className="flex items-center justify-between">
-                      <p>Filters:</p>
-                      <button type="button" onClick={handleCleanAll} className="text-blue">
+                      <p className="font-medium text-dark">Filters:</p>
+                      <button type="button" onClick={handleCleanAll} className="text-blue text-sm cursor-pointer hover:underline">
                         Clean All
                       </button>
                     </div>
@@ -230,12 +233,12 @@ const handleCleanAll = () => {
                     products={products}
                   />
 
-<BrandDropdown
-  selectedBrands={selectedBrands}
-  onSelectBrand={(brands) => setSelectedBrands(brands)}
-  products={products}
-/>
-                {/* <!-- attributes box --> */}
+                  {/* <!-- brand box --> */}
+                  <BrandDropdown
+                    selectedBrands={selectedBrands}
+                    onSelectBrand={(brands) => setSelectedBrands(brands)}
+                    products={products}
+                  />
                 </div>
               </form>
             </div>
@@ -250,7 +253,7 @@ const handleCleanAll = () => {
                     <select
                       value={sortOption}
                       onChange={(e) => setSortOption(e.target.value)}
-                      className="p-2 border rounded text-sm text-black bg-white focus:outline-black"
+                      className="p-2 border rounded text-sm text-black bg-white focus:outline-black cursor-pointer"
                     >
                       {options.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -259,9 +262,8 @@ const handleCleanAll = () => {
                       ))}
                     </select>
 
-                    <p>
-                      Showing <span className="text-dark font-semibold">{filteredProducts.length}</span>{" "}
-                      Products
+                    <p className="text-sm">
+                      Showing <span className="text-dark font-semibold">{isLoading ? "..." : filteredProducts.length}</span> Products
                     </p>
                   </div>
 
@@ -274,7 +276,7 @@ const handleCleanAll = () => {
                         productStyle === "grid"
                           ? "bg-blue border-blue text-white"
                           : "text-dark bg-gray-1 border-gray-3"
-                      } flex items-center justify-center w-10.5 h-9 rounded-[5px] border ease-out duration-200 hover:bg-blue hover:border-blue hover:text-white`}
+                      } flex items-center justify-center w-10.5 h-9 rounded-[5px] border ease-out duration-200 hover:bg-blue hover:border-blue hover:text-white cursor-pointer`}
                     >
                       Grid
                     </button>
@@ -285,7 +287,7 @@ const handleCleanAll = () => {
                         productStyle === "list"
                           ? "bg-blue border-blue text-white"
                           : "text-dark bg-gray-1 border-gray-3"
-                      } flex items-center justify-center w-10.5 h-9 rounded-[5px] border ease-out duration-200 hover:bg-blue hover:border-blue hover:text-white`}
+                      } flex items-center justify-center w-10.5 h-9 rounded-[5px] border ease-out duration-200 hover:bg-blue hover:border-blue hover:text-white cursor-pointer`}
                     >
                       List
                     </button>
@@ -301,7 +303,19 @@ const handleCleanAll = () => {
                     : "flex flex-col gap-7.5"
                 }`}
               >
-                {filteredProducts.length > 0 ? (
+                {isLoading ? (
+                  // Loading Skeletons
+                  Array.from({ length: 6 }).map((_, index) => (
+                    <div key={index} className={productStyle === "grid" ? "group animate-pulse" : "group rounded-lg bg-white shadow-1 animate-pulse p-4"}>
+                      <div className="relative overflow-hidden flex items-center justify-center rounded-lg bg-gray-2 min-h-[270px] mb-4" />
+                      <div className="space-y-3">
+                        <div className="h-4 bg-gray-2 rounded w-1/3"></div>
+                        <div className="h-5 bg-gray-2 rounded w-3/4"></div>
+                        <div className="h-6 bg-gray-2 rounded w-1/2"></div>
+                      </div>
+                    </div>
+                  ))
+                ) : filteredProducts.length > 0 ? (
                   filteredProducts.map((item, key) =>
                     productStyle === "grid" ? (
                       <SingleGridItem item={item} key={key} />
