@@ -11,15 +11,16 @@ import "swiper/css/navigation";
 import "swiper/css";
 
 const RecentlyViewdItems = () => {
-  const sliderRef = useRef(null);
+  // Explicitly typing ref as any to resolve 'never' type error
+  const sliderRef = useRef<any>(null);
 
   const handlePrev = useCallback(() => {
-    if (!sliderRef.current) return;
+    if (!sliderRef.current || !sliderRef.current.swiper) return;
     sliderRef.current.swiper.slidePrev();
   }, []);
 
   const handleNext = useCallback(() => {
-    if (!sliderRef.current) return;
+    if (!sliderRef.current || !sliderRef.current.swiper) return;
     sliderRef.current.swiper.slideNext();
   }, []);
 
@@ -45,7 +46,7 @@ const RecentlyViewdItems = () => {
             </div>
 
             <div className="flex items-center gap-3">
-              <button onClick={handlePrev} className="swiper-button-prev">
+              <button onClick={handlePrev} className="swiper-button-prev cursor-pointer">
                 <svg
                   className="fill-current"
                   width="24"
@@ -63,7 +64,7 @@ const RecentlyViewdItems = () => {
                 </svg>
               </button>
 
-              <button onClick={handleNext} className="swiper-button-next">
+              <button onClick={handleNext} className="swiper-button-next cursor-pointer">
                 <svg
                   className="fill-current"
                   width="24"
@@ -89,7 +90,7 @@ const RecentlyViewdItems = () => {
             spaceBetween={20}
             className="justify-between"
           >
-            {shopData.map((item, key) => (
+            {Array.isArray(shopData) && shopData.map((item, key) => (
               <SwiperSlide key={key}>
                 <ProductItem item={item} />
               </SwiperSlide>
