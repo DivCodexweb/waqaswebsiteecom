@@ -10,15 +10,16 @@ import "swiper/css";
 import SingleItem from "./SingleItem";
 
 const Testimonials = () => {
-  const sliderRef = useRef(null);
+  // Explicitly typing ref as any to resolve 'never' type error
+  const sliderRef = useRef<any>(null);
 
   const handlePrev = useCallback(() => {
-    if (!sliderRef.current) return;
+    if (!sliderRef.current || !sliderRef.current.swiper) return;
     sliderRef.current.swiper.slidePrev();
   }, []);
 
   const handleNext = useCallback(() => {
-    if (!sliderRef.current) return;
+    if (!sliderRef.current || !sliderRef.current.swiper) return;
     sliderRef.current.swiper.slideNext();
   }, []);
 
@@ -45,7 +46,7 @@ const Testimonials = () => {
               </div>
 
               <div className="flex items-center gap-3">
-                <div onClick={handlePrev} className="swiper-button-prev">
+                <div onClick={handlePrev} className="swiper-button-prev cursor-pointer">
                   <svg
                     className="fill-current"
                     width="24"
@@ -63,7 +64,7 @@ const Testimonials = () => {
                   </svg>
                 </div>
 
-                <div onClick={handleNext} className="swiper-button-next">
+                <div onClick={handleNext} className="swiper-button-next cursor-pointer">
                   <svg
                     className="fill-current"
                     width="24"
@@ -88,15 +89,12 @@ const Testimonials = () => {
               slidesPerView={3}
               spaceBetween={20}
               breakpoints={{
-                // when window width is >= 640px
                 0: {
                   slidesPerView: 1,
                 },
                 1000: {
                   slidesPerView: 2,
-                  // spaceBetween: 4,
                 },
-                // when window width is >= 768px
                 1200: {
                   slidesPerView: 3,
                 },
