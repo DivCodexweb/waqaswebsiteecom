@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
@@ -7,21 +8,48 @@ import { addItemToCart } from "@/redux/features/cart-slice";
 
 import Image from "next/image";
 
-const SingleItem = ({ item }) => {
+interface WishlistItem {
+  id: number | string; // Allow both, we will parse when needed
+  title: string;
+  price: number;
+  discountedPrice?: number;
+  imgs?: {
+    thumbnails?: string[];
+    previews?: string[];
+  };
+  [key: string]: any;
+}
+
+interface SingleItemProps {
+  item: WishlistItem;
+}
+
+const SingleItem: React.FC<SingleItemProps> = ({ item }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const handleRemoveFromWishlist = () => {
-    dispatch(removeItemFromWishlist(item.id));
+    // Number conversion taake Redux type mismatch error na aaye
+    dispatch(removeItemFromWishlist(Number(item.id)));
   };
-
-  const handleAddToCart = () => {
+const handleAddToCart = () => {
     dispatch(
       addItemToCart({
         ...item,
+        id: Number(item.id),
+        discountedPrice: item.discountedPrice ?? item.price,
+        imgs: {
+          thumbnails: item.imgs?.thumbnails ?? [],
+          previews: item.imgs?.previews ?? [],
+        },
         quantity: 1,
       })
     );
   };
+
+  const thumbnailSrc =
+    item.imgs?.thumbnails?.[0] ||
+    item.imgs?.previews?.[0] ||
+    "/images/placeholder.jpg";
 
   return (
     <div className="flex items-center border-t border-gray-3 py-5 px-10">
@@ -29,7 +57,7 @@ const SingleItem = ({ item }) => {
         <button
           onClick={() => handleRemoveFromWishlist()}
           aria-label="button for remove product from wishlist"
-          className="flex items-center justify-center rounded-lg max-w-[38px] w-full h-9.5 bg-gray-2 border border-gray-3 ease-out duration-200 hover:bg-red-light-6 hover:border-red-light-4 hover:text-red"
+          className="flex items-center justify-center rounded-lg max-w-[38px] w-full h-9.5 bg-gray-2 border border-gray-3 ease-out duration-200 hover:bg-red-light-6 hover:border-red-light-4 hover:text-red cursor-pointer"
         >
           <svg
             className="fill-current"
@@ -56,13 +84,13 @@ const SingleItem = ({ item }) => {
       <div className="min-w-[387px]">
         <div className="flex items-center justify-between gap-5">
           <div className="w-full flex items-center gap-5.5">
-            <div className="flex items-center justify-center rounded-[5px] bg-gray-2 max-w-[80px] w-full h-17.5">
-              <Image src={item.imgs?.thumbnails[0]} alt="product" width={200} height={200} />
+            <div className="flex items-center justify-center rounded-[5px] bg-gray-2 max-w-[80px] w-full h-17.5 overflow-hidden">
+              <Image src={thumbnailSrc} alt={item.title || "product"} width={80} height={80} className="object-contain h-full" />
             </div>
 
             <div>
               <h3 className="text-dark ease-out duration-200 hover:text-blue">
-                <a href="#"> {item.title} </a>
+                <span className="cursor-pointer"> {item.title} </span>
               </h3>
             </div>
           </div>
@@ -70,7 +98,7 @@ const SingleItem = ({ item }) => {
       </div>
 
       <div className="min-w-[205px]">
-        <p className="text-dark">${item.discountedPrice}</p>
+        <p className="text-dark font-medium">${item.discountedPrice || item.price}</p>
       </div>
 
       <div className="min-w-[265px]">
@@ -105,7 +133,7 @@ const SingleItem = ({ item }) => {
       <div className="min-w-[150px] flex justify-end">
         <button
           onClick={() => handleAddToCart()}
-          className="inline-flex text-dark hover:text-white bg-gray-1 border border-gray-3 py-2.5 px-6 rounded-md ease-out duration-200 hover:bg-blue hover:border-gray-3"
+          className="inline-flex text-dark hover:text-white bg-gray-1 border border-gray-3 py-2.5 px-6 rounded-md ease-out duration-200 hover:bg-blue hover:border-gray-3 cursor-pointer"
         >
           Add to Cart
         </button>
