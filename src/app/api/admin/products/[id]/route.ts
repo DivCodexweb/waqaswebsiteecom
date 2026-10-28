@@ -6,10 +6,17 @@ import { eq } from 'drizzle-orm';
 // PUT: Product update karne ke liye
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = parseInt(params.id);
+    // Next.js requirement: await params
+    const resolvedParams = await params;
+    const id = parseInt(resolvedParams.id);
+
+    if (isNaN(id)) {
+      return NextResponse.json({ success: false, message: "Invalid product ID" }, { status: 400 });
+    }
+
     const body = await request.json();
 
     const updatedProduct = await db.update(products)
@@ -49,7 +56,6 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Next.js 15 requirement: await params
     const resolvedParams = await params;
     const id = parseInt(resolvedParams.id);
 
@@ -72,7 +78,7 @@ export async function DELETE(
   }
 }
 
-// Agar ishi file mein GET ya PUT method bhi hai, to unme bhi params ko await karna na bhulein:
+// GET: Single product fetch karne ke liye
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -80,6 +86,10 @@ export async function GET(
   try {
     const resolvedParams = await params;
     const id = parseInt(resolvedParams.id);
+
+    if (isNaN(id)) {
+      return NextResponse.json({ success: false, message: "Invalid product ID" }, { status: 400 });
+    }
 
     const product = await db.select().from(products).where(eq(products.id, id));
 
