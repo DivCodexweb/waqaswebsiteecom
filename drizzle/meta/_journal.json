@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1790671690733,
+      "tag": "0000_fresh_chronomancer",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1790677521516,
+      "tag": "0001_skinny_victor_mancha",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1790752118766,
+      "tag": "0002_mean_crystal",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1790759136684,
+      "tag": "0003_quick_stingray",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1792402157597,
+      "tag": "0004_shallow_silver_sable",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1792402293001,
+      "tag": "0005_thankful_eternals",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1793041734953,
+      "tag": "0006_lame_reaper",
+      "breakpoints": true
+    }
+  ]
+}

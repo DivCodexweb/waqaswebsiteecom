@@ -1,0 +1,1 @@
+ALTER TABLE `products` ADD `subcategory_id` integer REFERENCES subcategories(id);
