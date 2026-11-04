@@ -5,9 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import LogoutButton from "@/components/logout/LogoutButton";
-// @ts-expect-error - CSS imports are handled by Next.js.
 import "../css/euclid-circular-a-font.css";
-// @ts-expect-error - CSS imports are handled by Next.js.
 import "../css/style.css";
 
 export default function AdminLayout({
