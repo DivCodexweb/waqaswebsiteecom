@@ -7,20 +7,16 @@ const NewArrival = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+useEffect(() => {
     async function fetchLatestProducts() {
       try {
-        const res = await fetch("/api/admin/products");
+        const res = await fetch("/api/admin/newarrivalproducts");
         if (res.ok) {
           const json = await res.json();
           const list = Array.isArray(json) ? json : json.data || json.products || [];
           
-          // Sort products by ID descending (latest added first) and take top 8
-          const sortedLatest = list
-            .sort((a: any, b: any) => b.id - a.id)
-            .slice(0, 8);
-
-          setProducts(sortedLatest);
+          // Backend se already sorted aur limited data aa raha hai
+          setProducts(list);
         }
       } catch (err) {
         console.error("Failed to fetch new arrival products", err);

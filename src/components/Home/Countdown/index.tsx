@@ -1,30 +1,24 @@
-"use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Image from "next/image";
+import CountdownTimer from "./CountdownTimer"; // Path apne folder ke mutabiq check kar len
+import { db } from "@/db"; // Apne db path ke mutabiq adjust karein
+import { offerimages } from "@/db/schema"; // Apne schema path ke mutabiq adjust karein
+import { desc } from "drizzle-orm";
 
-const CounDown = () => {
-  const [days, setDays] = useState(0);
-  const [hours, setHours] = useState(0);
-  const [minutes, setMinutes] = useState(0);
-  const [seconds, setSeconds] = useState(0);
+const CounDown = async () => {
+  // Database se sabse latest offer fetch karein (id ke descending order mein)
+  const offers = await db
+    .select()
+    .from(offerimages)
+    .orderBy(desc(offerimages.id))
+    .limit(1);
 
-  const deadline = "December, 31, 2024";
+  const currentOffer = offers[0];
 
-  const getTime = () => {
-    const time = Date.parse(deadline) - Date.now();
-
-    setDays(Math.floor(time / (1000 * 60 * 60 * 24)));
-    setHours(Math.floor((time / (1000 * 60 * 60)) % 24));
-    setMinutes(Math.floor((time / 1000 / 60) % 60));
-    setSeconds(Math.floor((time / 1000) % 60));
-  };
-
-  useEffect(() => {
-    // @ts-ignore
-    const interval = setInterval(() => getTime(deadline), 1000);
-
-    return () => clearInterval(interval);
-  }, []);
+  // Agar database mein data mojood ho toh wahan ki date/link/img use ho, warna default
+  const targetDate = currentOffer?.date || "2026-12-31";
+  const offerLink = currentOffer?.link || "#";
+  const offerImg = currentOffer?.img || "/images/countdown/countdown-01.png";
 
   return (
     <section className="overflow-hidden py-20">
@@ -41,77 +35,18 @@ const CounDown = () => {
 
             <p>The Havit H206d is a wired PC headphone.</p>
 
-            {/* <!-- Countdown timer --> */}
-            <div
-              className="flex flex-wrap gap-6 mt-6"
-              x-data="timer()"
-              x-init="countdown()"
-            >
-              {/* <!-- timer day --> */}
-              <div>
-                <span
-                  className="min-w-[64px] h-14.5 font-semibold text-xl lg:text-3xl text-dark rounded-lg flex items-center justify-center bg-white shadow-2 px-4 mb-2"
-                  x-text="days"
-                >
-                  {" "}
-                  {days < 10 ? "0" + days : days}{" "}
-                </span>
-                <span className="block text-custom-sm text-dark text-center">
-                  Days
-                </span>
-              </div>
-
-              {/* <!-- timer hours --> */}
-              <div>
-                <span
-                  className="min-w-[64px] h-14.5 font-semibold text-xl lg:text-3xl text-dark rounded-lg flex items-center justify-center bg-white shadow-2 px-4 mb-2"
-                  x-text="hours"
-                >
-                  {" "}
-                  {hours < 10 ? "0" + hours : hours}{" "}
-                </span>
-                <span className="block text-custom-sm text-dark text-center">
-                  Hours
-                </span>
-              </div>
-
-              {/* <!-- timer minutes --> */}
-              <div>
-                <span
-                  className="min-w-[64px] h-14.5 font-semibold text-xl lg:text-3xl text-dark rounded-lg flex items-center justify-center bg-white shadow-2 px-4 mb-2"
-                  x-text="minutes"
-                >
-                  {minutes < 10 ? "0" + minutes : minutes}{" "}
-                </span>
-                <span className="block text-custom-sm text-dark text-center">
-                  Minutes
-                </span>
-              </div>
-
-              {/* <!-- timer seconds --> */}
-              <div>
-                <span
-                  className="min-w-[64px] h-14.5 font-semibold text-xl lg:text-3xl text-dark rounded-lg flex items-center justify-center bg-white shadow-2 px-4 mb-2"
-                  x-text="seconds"
-                >
-                  {seconds < 10 ? "0" + seconds : seconds}{" "}
-                </span>
-                <span className="block text-custom-sm text-dark text-center">
-                  Seconds
-                </span>
-              </div>
-            </div>
-            {/* <!-- Countdown timer ends --> */}
+            {/* Countdown Timer Component (Jo expiry par "Offer Closed" dikhayega) */}
+            <CountdownTimer targetDate={targetDate} />
 
             <a
-              href="#"
+              href={offerLink}
               className="inline-flex font-medium text-custom-sm text-white bg-blue py-3 px-9.5 rounded-md ease-out duration-200 hover:bg-blue-dark mt-7.5"
             >
               Check it Out!
             </a>
           </div>
 
-          {/* <!-- bg shapes --> */}
+          {/* Background Shapes */}
           <Image
             src="/images/countdown/countdown-bg.png"
             alt="bg shapes"
@@ -119,13 +54,16 @@ const CounDown = () => {
             width={737}
             height={482}
           />
-          <Image
-            src="/images/countdown/countdown-01.png"
-            alt="product"
-            className="hidden lg:block absolute right-4 xl:right-33 bottom-4 xl:bottom-10 -z-1"
-            width={411}
-            height={376}
-          />
+
+          {/* Database se aane wali Dynamic Product Image */}
+          <div className="hidden lg:block absolute right-4 xl:right-33 bottom-4 xl:bottom-10 -z-1 w-[411px] h-[376px]">
+            <Image
+              src={offerImg}
+              alt="product offer image"
+              fill
+              className="object-contain"
+            />
+          </div>
         </div>
       </div>
     </section>

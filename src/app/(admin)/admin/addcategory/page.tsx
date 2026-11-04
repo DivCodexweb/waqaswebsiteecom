@@ -187,8 +187,8 @@ export default function CategoryAdminPage() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading}
-              className="w-full flex justify-center font-medium text-black bg-black-900 py-3 px-6 rounded-lg ease-out duration-200 hover:bg-blue-600 disabled:opacity-50"
+              disabled={loading} 
+              className="w-full flex justify-center font-medium text-white bg-black-900 py-3 px-6 rounded-lg ease-out duration-200 hover:bg-blue-600 disabled:opacity-50" style={{ backgroundColor: 'black' }}
             >
               {loading ? 'Processing...' : editingId ? 'Update Category' : 'Add Category'}
             </button>

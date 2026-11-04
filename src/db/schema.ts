@@ -1,4 +1,5 @@
 import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
+import { Tags } from 'lucide-react';
 
 export const users = sqliteTable("users", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -19,6 +20,41 @@ export const brands = sqliteTable('brands', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   title: text('title').notNull(),
   img: text('img').notNull(),
+});
+export const sliders = sqliteTable('sliders', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  link: text('link').notNull(),
+  img: text('img').notNull(),
+});
+export const images = sqliteTable('images', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  locationid: text('locationid').notNull(),
+  link: text('link').notNull(),
+  img: text('img').notNull(),
+});
+export const offerimages = sqliteTable('offerimages', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  link: text('link').notNull(),
+  img: text('img').notNull(),
+  date: text('date').notNull(),
+});
+export const feedbacks = sqliteTable('feedbacks', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  name: text('name').notNull(),
+  img: text('img').notNull(),
+  description: text('description').notNull(),
+});
+export const blog  = sqliteTable('blog', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  title: text('title').notNull(),
+  img: text('img').notNull(),
+  description: text('description').notNull(),
+  tags: text('tags').notNull(),
+});
+export const sociallink  = sqliteTable('sociallink', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  title: text('title').notNull(),
+  link: text('link').notNull(),
 });
 export const attributes = sqliteTable('attributes', {
   id: integer('id').primaryKey({ autoIncrement: true }),

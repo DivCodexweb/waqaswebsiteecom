@@ -1,8 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
+// @ts-ignore - Next.js handles this stylesheet import at build time.
 import "../css/euclid-circular-a-font.css";
+// @ts-ignore - Next.js handles this stylesheet import at build time.
 import "../css/style.css";
-
+import SocialWidget from "../../components/SocialWidget";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 
@@ -41,7 +43,7 @@ export default function RootLayout({
                   <PreviewSliderProvider>
                     <Header />
                     {children}
-
+<SocialWidget /> 
                     <QuickViewModal />
                     <CartSidebarModal />
                     <PreviewSliderModal />

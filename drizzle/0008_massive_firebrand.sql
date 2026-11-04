@@ -1,0 +1,1 @@
+ALTER TABLE `images` ADD `locationid` text NOT NULL;

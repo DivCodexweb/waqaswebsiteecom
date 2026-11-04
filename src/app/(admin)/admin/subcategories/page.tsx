@@ -235,7 +235,7 @@ export default function SubCategoryAdminPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center font-medium text-black bg-gray-900 py-3 px-6 rounded-lg ease-out duration-200 hover:bg-blue-600 disabled:opacity-50"
+              className="w-full flex justify-center font-medium text-white bg-gray-900 py-3 px-6 rounded-lg ease-out duration-200 hover:bg-blue-600 disabled:opacity-50" style={{ backgroundColor: 'black' }}
             >
               {loading ? "Processing..." : editingId ? "Update Subcategory" : "Add Subcategory"}
             </button>

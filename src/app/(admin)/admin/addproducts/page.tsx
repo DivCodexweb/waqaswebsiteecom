@@ -9,16 +9,17 @@ import {
   Image as ImageIcon,
   Sliders,
   FileText,
-  SearchCheck,
   Trash2,
   Edit,
   Plus,
   CheckCircle2,
-  XCircle,
   Video,
   X,
   ChevronDown,
   Sparkles,
+  Search,
+  List,
+  Filter,
 } from "lucide-react";
 
 // Reusable Searchable Dropdown Component
@@ -135,6 +136,15 @@ export default function ProductAdminPage() {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [imageError, setImageError] = useState("");
 
+  // Modal Popup & Filter / Pagination States
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchTitle, setSearchTitle] = useState("");
+  const [filterBrandId, setFilterBrandId] = useState("");
+  const [filterCategoryId, setFilterCategoryId] = useState("");
+  const [filterSubcategoryId, setFilterSubcategoryId] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
+
   // Form State
   const [formData, setFormData] = useState({
     title: "",
@@ -203,7 +213,7 @@ export default function ProductAdminPage() {
     }
   };
 
-  // Filter Subcategories dynamically
+  // Filter Subcategories dynamically for Form
   const filteredSubcategories = useMemo(() => {
     if (!formData.categoryId) return [];
     return subcategories.filter(
@@ -211,12 +221,37 @@ export default function ProductAdminPage() {
     );
   }, [subcategories, formData.categoryId]);
 
+  // Filter Subcategories dynamically for Modal Filter
+  const modalFilteredSubcategories = useMemo(() => {
+    if (!filterCategoryId) return [];
+    return subcategories.filter(
+      (sub: any) => sub.categoryId?.toString() === filterCategoryId.toString()
+    );
+  }, [subcategories, filterCategoryId]);
+
+  // Modal Advanced Filtering Logic
+  const filteredProducts = useMemo(() => {
+    return products.filter((p) => {
+      const matchTitle = p.title.toLowerCase().includes(searchTitle.toLowerCase());
+      const matchBrand = filterBrandId ? p.brandId?.toString() === filterBrandId : true;
+      const matchCategory = filterCategoryId ? p.categoriesId?.toString() === filterCategoryId : true;
+      const matchSubcategory = filterSubcategoryId ? p.subcategoryId?.toString() === filterSubcategoryId : true;
+      return matchTitle && matchBrand && matchCategory && matchSubcategory;
+    });
+  }, [products, searchTitle, filterBrandId, filterCategoryId, filterSubcategoryId]);
+
+  // Pagination Logic (20 Items Per Page)
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage) || 1;
+  const paginatedProducts = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredProducts.slice(start, start + itemsPerPage);
+  }, [filteredProducts, currentPage]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle Images Upload with 500KB limit
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setImageError("");
     const files = e.target.files;
@@ -339,6 +374,7 @@ export default function ProductAdminPage() {
       setSelectedImages([]);
     }
 
+    setIsModalOpen(false); // Close Modal when Editing
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -387,21 +423,44 @@ export default function ProductAdminPage() {
     });
   };
 
+  const clearModalFilters = () => {
+    setSearchTitle("");
+    setFilterBrandId("");
+    setFilterCategoryId("");
+    setFilterSubcategoryId("");
+    setCurrentPage(1);
+  };
+
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-8 bg-gray-50 min-h-screen">
-      {/* Page Header */}
-      <div className="flex items-center justify-between bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-        <div className="flex items-center gap-3">
-          <div className="p-3 bg-blue-100 text-blue-600 rounded-xl">
+    <div className="p-6 max-w-7xl mx-auto space-y-8 min-h-screen">
+      {/* Top Header Bar with Open Modal Button */}
+      <div 
+        className="w-full bg-black text-white p-6 rounded-2xl shadow-md border border-gray-800 flex items-center justify-between my-6" 
+        style={{ background: "linear-gradient(90deg, #1e293b, #0f172a)" }}
+      >
+        <div className="flex items-center gap-4 text-left">
+          <div className="p-3 bg-gray-900 text-white rounded-xl border border-gray-700 flex-shrink-0">
             <PackagePlus className="w-8 h-8" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">
+            <h1 className="text-2xl font-bold text-white">
               {isEditing ? "Edit Product" : "Add New Product"}
             </h1>
-            <p className="text-sm text-gray-500">Manage your store catalog and product inventory</p>
+            <p className="text-sm text-gray-400 mt-1">
+              Manage your store catalog and product inventory
+            </p>
           </div>
         </div>
+
+        {/* Top Button to Open Products List Modal */}
+        <button
+          type="button"
+          onClick={() => setIsModalOpen(true)}
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-bold shadow-lg transition"
+        >
+          <List className="w-5 h-5" />
+          <span>View Products ({products.length})</span>
+        </button>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -736,72 +795,183 @@ export default function ProductAdminPage() {
         </div>
       </form>
 
-      {/* PORTION 7: Existing Products Table */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
-        <div className="flex items-center gap-2 border-b pb-3 text-gray-800 font-semibold text-lg">
-          <SearchCheck className="w-5 h-5 text-blue-600" />
-          <h2>Existing Products List</h2>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 border-b text-gray-600 text-sm">
-                <th className="p-3">Title</th>
-                <th className="p-3">Brand</th>
-                <th className="p-3">Price</th>
-                <th className="p-3">Stock</th>
-                <th className="p-3">Refundable</th>
-                <th className="p-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y text-sm">
-              {products.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="text-center p-6 text-gray-400">
-                    No products added yet.
-                  </td>
-                </tr>
-              ) : (
-                products.map((product) => (
-                  <tr key={product.id} className="hover:bg-gray-50 transition">
-                    <td className="p-3 font-semibold text-gray-800">{product.title}</td>
-                    <td className="p-3 text-gray-500">{product.brandName || "N/A"}</td>
-                    <td className="p-3 font-medium text-emerald-600">PKR {product.price}</td>
-                    <td className="p-3 text-gray-600">{product.stock}</td>
-                    <td className="p-3">
-                      <span
-                        className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                          product.isRefundable === "yes"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-red-100 text-red-700"
-                        }`}
-                      >
-                        {product.isRefundable}
-                      </span>
-                    </td>
-                    <td className="p-3 flex items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => handleEdit(product)}
-                        className="text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium"
-                      >
-                        <Edit className="w-4 h-4" /> Edit
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(product.id)}
-                        className="text-red-600 hover:text-red-800 flex items-center gap-1 font-medium"
-                      >
-                        <Trash2 className="w-4 h-4" /> Delete
-                      </button>
-                    </td>
+      {/* POPUP MODAL FOR EXISTING PRODUCTS LIST */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 max-w-6xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            
+            {/* Modal Header */}
+            <div className="p-5 bg-gray-900 text-black flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <List className="w-6 h-6 text-blue-400" />
+                <h2 className="text-xl font-bold">Existing Products List ({filteredProducts.length})</h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="p-1 rounded-lg hover:bg-black-800 text-black-400 hover:text-black transition"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Modal Filters Section */}
+            <div className="p-4 bg-gray-50 border-b border-gray-200 space-y-3">
+              <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                <Filter className="w-4 h-4 text-blue-600" />
+                <span>Filter Products</span>
+                {(searchTitle || filterBrandId || filterCategoryId || filterSubcategoryId) && (
+                  <button
+                    onClick={clearModalFilters}
+                    className="text-xs text-red-600 hover:underline ml-auto"
+                  >
+                    Clear Filters
+                  </button>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                {/* Search Title */}
+                <div className="relative">
+                  <Search className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search by Title..."
+                    value={searchTitle}
+                    onChange={(e) => { setSearchTitle(e.target.value); setCurrentPage(1); }}
+                    className="w-full pl-9 pr-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                {/* Filter Brand */}
+                <select
+                  value={filterBrandId}
+                  onChange={(e) => { setFilterBrandId(e.target.value); setCurrentPage(1); }}
+                  className="w-full p-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">All Brands</option>
+                  {brands.map((b: any) => (
+                    <option key={b.id} value={b.id.toString()}>{b.title}</option>
+                  ))}
+                </select>
+
+                {/* Filter Category */}
+                <select
+                  value={filterCategoryId}
+                  onChange={(e) => { setFilterCategoryId(e.target.value); setFilterSubcategoryId(""); setCurrentPage(1); }}
+                  className="w-full p-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">All Categories</option>
+                  {categories.map((c: any) => (
+                    <option key={c.id} value={c.id.toString()}>{c.title}</option>
+                  ))}
+                </select>
+
+                {/* Filter Subcategory */}
+                <select
+                  value={filterSubcategoryId}
+                  onChange={(e) => { setFilterSubcategoryId(e.target.value); setCurrentPage(1); }}
+                  disabled={!filterCategoryId}
+                  className="w-full p-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                >
+                  <option value="">All Subcategories</option>
+                  {modalFilteredSubcategories.map((s: any) => (
+                    <option key={s.id} value={s.id.toString()}>{s.title}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Modal Table Body */}
+            <div className="p-4 overflow-y-auto flex-1">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-100 border-b text-gray-700 text-sm">
+                    <th className="p-3">Title</th>
+                    <th className="p-3">Brand</th>
+                    <th className="p-3">Price</th>
+                    <th className="p-3">Stock</th>
+                    <th className="p-3">Refundable</th>
+                    <th className="p-3">Actions</th>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                </thead>
+                <tbody className="divide-y text-sm">
+                  {paginatedProducts.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="text-center p-8 text-gray-400">
+                        No products match your filter parameters.
+                      </td>
+                    </tr>
+                  ) : (
+                    paginatedProducts.map((product) => (
+                      <tr key={product.id} className="hover:bg-gray-50 transition">
+                        <td className="p-3 font-semibold text-gray-800">{product.title}</td>
+                        <td className="p-3 text-gray-500">{product.brandName || "N/A"}</td>
+                        <td className="p-3 font-medium text-emerald-600">PKR {product.price}</td>
+                        <td className="p-3 text-gray-600">{product.stock}</td>
+                        <td className="p-3">
+                          <span
+                            className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+                              product.isRefundable === "yes"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-red-100 text-red-700"
+                            }`}
+                          >
+                            {product.isRefundable}
+                          </span>
+                        </td>
+                        <td className="p-3 flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleEdit(product)}
+                            className="text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium bg-blue-50 px-3 py-1.5 rounded-lg transition"
+                          >
+                            <Edit className="w-4 h-4" /> Edit
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(product.id)}
+                            className="text-red-600 hover:text-red-800 flex items-center gap-1 font-medium bg-red-50 px-3 py-1.5 rounded-lg transition"
+                          >
+                            <Trash2 className="w-4 h-4" /> Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Modal Pagination Footer */}
+            <div className="p-4 bg-gray-100 border-t border-gray-200 flex items-center justify-between text-sm">
+              <span className="text-gray-600 font-medium">
+                Page {currentPage} of {totalPages} ({filteredProducts.length} Total Items)
+              </span>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  className="px-4 py-2 border border-gray-300 rounded-lg bg-white font-semibold text-gray-700 disabled:opacity-50 hover:bg-gray-50 transition"
+                >
+                  Previous
+                </button>
+                <button
+                  type="button"
+                  disabled={currentPage >= totalPages}
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  className="px-4 py-2 border border-gray-300 rounded-lg bg-white font-semibold text-gray-700 disabled:opacity-50 hover:bg-gray-50 transition"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

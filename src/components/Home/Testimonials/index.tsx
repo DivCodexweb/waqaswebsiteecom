@@ -1,32 +1,22 @@
-"use client";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { useCallback, useRef } from "react";
-import testimonialsData from "./testimonialsData";
+import React from "react";
 import Image from "next/image";
-
-// Import Swiper styles
-import "swiper/css/navigation";
-import "swiper/css";
 import SingleItem from "./SingleItem";
+import { db } from "@/db"; // Apne db path ke mutabiq check kar len
+import { feedbacks } from "@/db/schema"; // Apne schema path ke mutabiq check kar len
 
-const Testimonials = () => {
-  // Explicitly typing ref as any to resolve 'never' type error
-  const sliderRef = useRef<any>(null);
+// Agar aap component ko Client Component rakh kar data fetch karna chahte hain 
+// ya Server Component rakhna chahte hain, toh Next.js mein Server Component ziada behtar hai.
+// Lekin Swiper ke slider ref ke liye hum isko Server Component bana kar inner content ko handle kar sakte hain,
+// ya phir ek chota client wrapper bana sakte hain. Ye raha direct Server Component version:
 
-  const handlePrev = useCallback(() => {
-    if (!sliderRef.current || !sliderRef.current.swiper) return;
-    sliderRef.current.swiper.slidePrev();
-  }, []);
-
-  const handleNext = useCallback(() => {
-    if (!sliderRef.current || !sliderRef.current.swiper) return;
-    sliderRef.current.swiper.slideNext();
-  }, []);
+const Testimonials = async () => {
+  // Database se feedbacks fetch karein
+  const testimonialsData = await db.select().from(feedbacks);
 
   return (
     <section className="overflow-hidden pb-16.5">
       <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
-        <div className="">
+        <div>
           <div className="swiper testimonial-carousel common-carousel p-5">
             {/* <!-- section title --> */}
             <div className="mb-10 flex items-center justify-between">
@@ -44,68 +34,20 @@ const Testimonials = () => {
                   User Feedbacks
                 </h2>
               </div>
-
-              <div className="flex items-center gap-3">
-                <div onClick={handlePrev} className="swiper-button-prev cursor-pointer">
-                  <svg
-                    className="fill-current"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M15.4881 4.43057C15.8026 4.70014 15.839 5.17361 15.5694 5.48811L9.98781 12L15.5694 18.5119C15.839 18.8264 15.8026 19.2999 15.4881 19.5695C15.1736 19.839 14.7001 19.8026 14.4306 19.4881L8.43056 12.4881C8.18981 12.2072 8.18981 11.7928 8.43056 11.5119L14.4306 4.51192C14.7001 4.19743 15.1736 4.161 15.4881 4.43057Z"
-                      fill=""
-                    />
-                  </svg>
-                </div>
-
-                <div onClick={handleNext} className="swiper-button-next cursor-pointer">
-                  <svg
-                    className="fill-current"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M8.51192 4.43057C8.82641 4.161 9.29989 4.19743 9.56946 4.51192L15.5695 11.5119C15.8102 11.7928 15.8102 12.2072 15.5695 12.4881L9.56946 19.4881C9.29989 19.8026 8.82641 19.839 8.51192 19.5695C8.19743 19.2999 8.161 18.8264 8.43057 18.5119L14.0122 12L8.43057 5.48811C8.161 5.17361 8.19743 4.70014 8.51192 4.43057Z"
-                      fill=""
-                    />
-                  </svg>
-                </div>
-              </div>
             </div>
 
-            <Swiper
-              ref={sliderRef}
-              slidesPerView={3}
-              spaceBetween={20}
-              breakpoints={{
-                0: {
-                  slidesPerView: 1,
-                },
-                1000: {
-                  slidesPerView: 2,
-                },
-                1200: {
-                  slidesPerView: 3,
-                },
-              }}
-            >
-              {testimonialsData.map((item, key) => (
-                <SwiperSlide key={key}>
-                  <SingleItem testimonial={item} />
-                </SwiperSlide>
-              ))}
-            </Swiper>
+            {/* Agar database mein feedback na ho toh message show ho */}
+            {testimonialsData.length === 0 ? (
+              <p className="text-gray-500 text-sm">No feedbacks available yet.</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {testimonialsData.map((item) => (
+                  <div key={item.id}>
+                    <SingleItem testimonial={item} />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
