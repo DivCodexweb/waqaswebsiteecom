@@ -276,12 +276,16 @@ const handleAddToCart = () => {
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-dark mt-3 leading-tight">{product.title}</h1>
                 </div>
 
-                <div className="flex items-center gap-4">
-                  <span className="text-3xl font-extrabold text-dark">RS {product.discountedPrice || product.price}</span>
-                  {product.discountedPrice && product.discountedPrice < product.price && (
-                    <span className="text-lg text-dark-4 line-through">RS {product.price.toLocaleString()}</span>
-                  )}
-                </div>
+          <div className="flex items-center gap-4">
+  <span className="text-3xl font-extrabold text-dark">
+    RS {(product.discountedPrice || product.price).toLocaleString()}
+  </span>
+  {product.discountedPrice && product.discountedPrice < product.price && (
+    <span className="text-lg text-dark-4 line-through">
+      RS {product.price.toLocaleString()}
+    </span>
+  )}
+</div>
 
                 <p className="text-dark-4 text-sm sm:text-base leading-relaxed">
                   {product.description || "No description available for this product."}
