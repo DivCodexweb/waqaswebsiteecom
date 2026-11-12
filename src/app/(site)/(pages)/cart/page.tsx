@@ -2,10 +2,18 @@ import React from "react";
 import Cart from "@/components/Cart";
 
 import { Metadata } from "next";
+
 export const metadata: Metadata = {
-  title: "Cart Page | NextCommerce Nextjs E-commerce template",
-  description: "This is Cart Page for NextCommerce Template",
-  // other metadata
+  title: "Shopping Cart | GetToHunt - Review Your Items",
+  description: "Review your selected footwear items, manage quantities, and proceed to secure checkout on GetToHunt.",
+  keywords: ["GetToHunt cart", "Shopping cart Pakistan", "Online footwear checkout"],
+  openGraph: {
+    title: "Shopping Cart | GetToHunt",
+    description: "Review your selected items and proceed to secure checkout.",
+    url: "https://gettohunt.com/cart",
+    siteName: "GetToHunt",
+    type: "website",
+  },
 };
 
 const CartPage = () => {

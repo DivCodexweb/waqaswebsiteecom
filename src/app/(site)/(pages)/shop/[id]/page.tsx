@@ -120,7 +120,7 @@ export default function ProductDetailPage() {
     }
   };
 
-  const handleAddToCart = () => {
+const handleAddToCart = () => {
     if (!product || isOutOfStock) return;
 
     if (quantity < minLimit) {
@@ -147,10 +147,7 @@ export default function ProductDetailPage() {
         ...product,
         id: Number(product.id),
         discountedPrice: product.discountedPrice ?? product.price,
-        imgs: {
-          thumbnails: typeof product.imgs === "object" && product.imgs !== null && "thumbnails" in product.imgs ? (product.imgs.thumbnails as string[]) : [],
-          previews: typeof product.imgs === "object" && product.imgs !== null && "previews" in product.imgs ? (product.imgs.previews as string[]) : [],
-        },
+        imgs: product.imgs, // <-- Yahan seedha product.imgs pass karein taaki Cloudinary URL barqarar rahay
         quantity,
         selectedAttributes,
       })

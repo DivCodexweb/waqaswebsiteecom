@@ -29,7 +29,7 @@ export const menuData: Menu[] = [
     id: 5,
     title: "About",
     newTab: false,
-    path: "/About",
+    path: "/about",
   },
   {
     id: 6,
@@ -37,13 +37,27 @@ export const menuData: Menu[] = [
     newTab: false,
     path: "/contact",
   },
-  {
-    id: 7,
-    title: "Blogs",
+  // {
+  //   id: 7,
+  //   title: "Blogs",
+  //   newTab: false,
+  //   path: "/blogs/blog-grid",
+  // },
+ 
+ 
+   {
+    id: 10,
+    title: "Order Tracking",
     newTab: false,
-    path: "/blogs/blog-grid",
+    path: "order-tracking",
   },
-  {
+   {
+    id: 9,
+    title: "Checkout",
+    newTab: false,
+    path: "/checkout",
+  },
+   {
     id: 8,
     title: "My Account",
     newTab: false,
@@ -57,23 +71,11 @@ export const menuData: Menu[] = [
         path: "/my-account",
       },
       {
-        id: 72,
-        title: "Orders",
-        newTab: false,
-        path: "/orders",
-      },
-      {
         id: 73,
         title: "Hunt For me",
         newTab: false,
         path: "/wishlist",
       },
     ],
-  },
-  {
-    id: 9,
-    title: "Checkout",
-    newTab: false,
-    path: "/checkout",
   },
 ];

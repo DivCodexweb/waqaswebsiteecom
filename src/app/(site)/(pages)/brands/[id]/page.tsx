@@ -3,7 +3,20 @@ import { brands, products } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import Breadcrumb from "@/components/Common/Breadcrumb";
 import ProductListing from "@/components/Shop/ProductListing";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Our Brands | GetToHunt - Top Footwear & Lifestyle Brands",
+  description: "Explore top-tier brands and collections available at GetToHunt. Shop your favorite footwear styles and premium quality products online in Pakistan.",
+  keywords: ["GetToHunt brands", "Footwear brands Pakistan", "Shop brands GetToHunt"],
+  openGraph: {
+    title: "Our Brands | GetToHunt",
+    description: "Explore top-tier brands and collections available at GetToHunt.",
+    url: "https://gettohunt.com/brands",
+    siteName: "GetToHunt",
+    type: "website",
+  },
+};
 export default async function BrandDetailPage({ params }: { params: Promise<{ id: string }> }) {
   // Next.js asynchronous params handling
   const resolvedParams = await params;

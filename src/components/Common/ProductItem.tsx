@@ -103,14 +103,15 @@ const ProductItem = ({ item }: { item: Product | any }) => {
             </svg>
           </button> */}
 
-          <button
+          <Link
+            href={`/shop/${item.id}`}
             onClick={() => handleAddToCart()}
             className="inline-flex font-medium text-custom-sm py-[7px] px-5 rounded-[5px] bg-blue text-white ease-out duration-200 hover:bg-blue-dark"
           >
-            Add to cart
-          </button>
+             View Details
+          </Link>
 
-          <button
+          {/* <button
             onClick={() => handleItemToWishList()}
             aria-label="button for favorite select"
             id="favOne"
@@ -131,7 +132,7 @@ const ProductItem = ({ item }: { item: Product | any }) => {
                 fill=""
               />
             </svg>
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -155,9 +156,9 @@ const ProductItem = ({ item }: { item: Product | any }) => {
       </h3>
 
       <span className="flex items-center gap-2 font-medium text-lg">
-        <span className="text-dark">${item.discountedPrice || item.price}</span>
+        <span className="text-dark">RS {(item.discountedPrice?.toLocaleString() || item.price?.toLocaleString())}</span>
         {item.discountedPrice && item.discountedPrice < item.price && (
-          <span className="text-dark-4 line-through">${item.price}</span>
+          <span className="text-dark-4 line-through">RS {item.price.toLocaleString()}</span>
         )}
       </span>
     </div>

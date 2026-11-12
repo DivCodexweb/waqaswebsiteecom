@@ -19,44 +19,51 @@ const SingleOrder = ({ orderItem, smallView }: any) => {
     setShowEdit(status);
   };
 
+  const orderIdStr = orderItem?.id ? String(orderItem.id) : "1000";
+  const formattedId = orderIdStr.length > 8 ? orderIdStr.slice(-8) : orderIdStr;
+
   return (
     <>
       {!smallView && (
-        <div className="items-center justify-between border-t border-gray-3 py-5 px-7.5 hidden md:flex">
-          <div className="min-w-[111px]">
-            <p className="text-custom-sm text-red">
-              #{orderItem.orderId.slice(-8)}
+        <div className="items-center justify-between border-b border-gray-3 py-5 px-7.5 hidden md:flex">
+          {/* 1. Order ID */}
+          <div className="w-[150px]">
+            <p className="text-custom-sm text-red font-bold">
+              #{formattedId}
             </p>
           </div>
-          <div className="min-w-[175px]">
-            <p className="text-custom-sm text-dark">{orderItem.createdAt}</p>
+
+          {/* 2. Date */}
+          <div className="w-[200px]">
+            <p className="text-custom-sm text-dark">
+              {orderItem?.createdAt ? new Date(orderItem.createdAt).toLocaleDateString() : "N/A"}
+            </p>
           </div>
 
-          <div className="min-w-[128px]">
-            <p
-              className={`inline-block text-custom-sm  py-0.5 px-2.5 rounded-[30px] capitalize ${
-                orderItem.status === "delivered"
+          {/* 3. Status */}
+          <div className="w-[150px]">
+            <span
+              className={`inline-block text-custom-sm py-0.5 px-2.5 rounded-[30px] capitalize font-medium ${
+                orderItem?.status === "delivered" || orderItem?.status === "completed"
                   ? "text-green bg-green-light-6"
-                  : orderItem.status === "on-hold"
+                  : orderItem?.status === "on-hold" || orderItem?.status === "cancelled"
                   ? "text-red bg-red-light-6"
-                  : orderItem.status === "processing"
-                  ? "text-yellow bg-yellow-light-4"
-                  : "Unknown Status"
+                  : "text-yellow bg-yellow-light-4"
               }`}
             >
-              {orderItem.status}
+              {orderItem?.status || "pending"}
+            </span>
+          </div>
+
+          {/* 4. Total Amount */}
+          <div className="w-[150px]">
+            <p className="text-custom-sm text-dark font-bold">
+              RS {orderItem?.totalAmount || orderItem?.total || 0}
             </p>
           </div>
 
-          <div className="min-w-[213px]">
-            <p className="text-custom-sm text-dark">{orderItem.title}</p>
-          </div>
-
-          <div className="min-w-[113px]">
-            <p className="text-custom-sm text-dark">{orderItem.total}</p>
-          </div>
-
-          <div className="flex gap-5 items-center">
+          {/* 5. Action */}
+          <div className="w-[120px] flex justify-end">
             <OrderActions
               toggleDetails={toggleDetails}
               toggleEdit={toggleEdit}
@@ -65,63 +72,34 @@ const SingleOrder = ({ orderItem, smallView }: any) => {
         </div>
       )}
 
+      {/* Mobile View */}
       {smallView && (
-        <div className="block md:hidden">
-          <div className="py-4.5 px-7.5">
-            <div className="">
-              <p className="text-custom-sm text-dark">
-                <span className="font-bold pr-2"> Order:</span> #
-                {orderItem.orderId.slice(-8)}
-              </p>
-            </div>
-            <div className="">
-              <p className="text-custom-sm text-dark">
-                <span className="font-bold pr-2">Date:</span>{" "}
-                {orderItem.createdAt}
-              </p>
-            </div>
-
-            <div className="">
-              <p className="text-custom-sm text-dark">
-                <span className="font-bold pr-2">Status:</span>{" "}
-                <span
-                  className={`inline-block text-custom-sm  py-0.5 px-2.5 rounded-[30px] capitalize ${
-                    orderItem.status === "delivered"
-                      ? "text-green bg-green-light-6"
-                      : orderItem.status === "on-hold"
-                      ? "text-red bg-red-light-6"
-                      : orderItem.status === "processing"
-                      ? "text-yellow bg-yellow-light-4"
-                      : "Unknown Status"
-                  }`}
-                >
-                  {orderItem.status}
-                </span>
-              </p>
-            </div>
-
-            <div className="">
-              <p className="text-custom-sm text-dark">
-                <span className="font-bold pr-2">Title:</span> {orderItem.title}
-              </p>
-            </div>
-
-            <div className="">
-              <p className="text-custom-sm text-dark">
-                <span className="font-bold pr-2">Total:</span> $
-                {orderItem.total}
-              </p>
-            </div>
-
-            <div className="">
-              <p className="text-custom-sm text-dark flex items-center">
-                <span className="font-bold pr-2">Actions:</span>{" "}
-                <OrderActions
-                  toggleDetails={toggleDetails}
-                  toggleEdit={toggleEdit}
-                />
-              </p>
-            </div>
+        <div className="block md:hidden border-b border-gray-3 p-4 space-y-2">
+          <p className="text-custom-sm text-dark">
+            <span className="font-bold pr-2">Order ID:</span> #{formattedId}
+          </p>
+          <p className="text-custom-sm text-dark">
+            <span className="font-bold pr-2">Date:</span> {orderItem?.createdAt ? new Date(orderItem.createdAt).toLocaleDateString() : "N/A"}
+          </p>
+          <p className="text-custom-sm text-dark flex items-center gap-2">
+            <span className="font-bold">Status:</span>
+            <span
+              className={`inline-block text-custom-sm py-0.5 px-2.5 rounded-[30px] capitalize font-medium ${
+                orderItem?.status === "delivered" || orderItem?.status === "completed"
+                  ? "text-green bg-green-light-6"
+                  : orderItem?.status === "on-hold" || orderItem?.status === "cancelled"
+                  ? "text-red bg-red-light-6"
+                  : "text-yellow bg-yellow-light-4"
+              }`}
+            >
+              {orderItem?.status || "pending"}
+            </span>
+          </p>
+          <p className="text-custom-sm text-dark">
+            <span className="font-bold pr-2">Total:</span> RS {orderItem?.totalAmount || orderItem?.total || 0}
+          </p>
+          <div className="pt-2">
+            <OrderActions toggleDetails={toggleDetails} toggleEdit={toggleEdit} />
           </div>
         </div>
       )}

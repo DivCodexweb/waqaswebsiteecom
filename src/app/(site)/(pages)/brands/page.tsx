@@ -4,7 +4,20 @@ import { sql } from "drizzle-orm";
 import Breadcrumb from "@/components/Common/Breadcrumb";
 import BrandViewWrapper from "@/components/Shop/BrandViewWrapper";
 import Link from "next/link";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Our Brands | GetToHunt - Top Footwear & Lifestyle Brands",
+  description: "Explore top-tier brands and collections available at GetToHunt. Shop your favorite footwear styles and premium quality products online in Pakistan.",
+  keywords: ["GetToHunt brands", "Footwear brands Pakistan", "Shop brands GetToHunt"],
+  openGraph: {
+    title: "Our Brands | GetToHunt",
+    description: "Explore top-tier brands and collections available at GetToHunt.",
+    url: "https://gettohunt.com/brands",
+    siteName: "GetToHunt",
+    type: "website",
+  },
+};
 interface BrandsPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }

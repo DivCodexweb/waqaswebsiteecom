@@ -10,7 +10,7 @@ export async function middleware(req: NextRequest) {
 
   const { pathname } = req.nextUrl;
 
-  // 1. Admin Routes Protection (Aap ka existing logic)
+  // 1. Admin Routes Protection (Sirf admin ke liye)
   if (
     pathname.startsWith("/admin") ||
     pathname.startsWith("/addcategory") ||
@@ -22,12 +22,11 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // 2. User Protected Routes Protection (Aap ka naya requirement)
+  // 2. User Protected Routes Protection (Checkout yahan se nikal diya gaya hai taaki guest user bhi ja sake)
   if (
     pathname.startsWith("/my-account") ||
     pathname.startsWith("/orders") ||
-    pathname.startsWith("/wishlist") ||
-    pathname.startsWith("/checkout")
+    pathname.startsWith("/wishlist")
   ) {
     if (!token) {
       const signinUrl = new URL("/signin", req.url);
@@ -37,7 +36,7 @@ export async function middleware(req: NextRequest) {
 
   const response = NextResponse.next();
 
-  // Cache disable headers taaki browser page ko cache mein na rakhe
+  // Cache disable headers
   response.headers.set(
     "Cache-Control",
     "no-store, no-cache, must-revalidate, proxy-revalidate"
@@ -56,6 +55,6 @@ export const config = {
     "/my-account/:path*",
     "/orders/:path*",
     "/wishlist/:path*",
-    "/checkout/:path*",
+    // "/checkout/:path*", <-- Yeh yahan se hata diya gaya hai
   ],
 };

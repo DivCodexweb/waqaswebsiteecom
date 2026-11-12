@@ -38,16 +38,13 @@ const SingleListItem = ({ item }: { item?: Product }) => {
   };
 
   // add to cart with safe type formatting
-  const handleAddToCart = () => {
+const handleAddToCart = () => {
     dispatch(
       addItemToCart({
         ...item,
         id: Number(item.id),
         discountedPrice: item.discountedPrice ?? item.price,
-        imgs: {
-          thumbnails: typeof item.imgs === "object" && item.imgs !== null && "thumbnails" in item.imgs ? (item.imgs.thumbnails as string[]) : [],
-          previews: typeof item.imgs === "object" && item.imgs !== null && "previews" in item.imgs ? (item.imgs.previews as string[]) : [],
-        },
+        imgs: item.imgs, // <-- Yahan seedha item.imgs pass karein (object ya array mat banayein)
         quantity: 1,
       })
     );
@@ -94,14 +91,14 @@ const SingleListItem = ({ item }: { item?: Product }) => {
           <Image src={imageSrc} alt={item.title || "Product"} width={250} height={250} className="object-contain group-hover:scale-105 transition duration-300" />
 
           <div className="absolute left-0 bottom-0 translate-y-full w-full flex items-center justify-center gap-2.5 pb-5 ease-linear duration-200 group-hover:translate-y-0" onClick={(e) => e.preventDefault()}>
-            <button
-              onClick={() => handleAddToCart()}
+            <Link
+              href={`/shop/${item.id}`} 
               className="inline-flex font-medium text-custom-sm py-[7px] px-5 rounded-[5px] bg-blue text-white ease-out duration-200 hover:bg-blue-dark cursor-pointer"
             >
-              Add to cart
-            </button>
+              View Details
+            </Link>
 
-            <button
+            {/* <button
               onClick={() => handleItemToWishList()}
               aria-label="button for favorite select"
               className="flex items-center justify-center w-9 h-9 rounded-[5px] shadow-1 ease-out duration-200 text-dark bg-white hover:text-blue cursor-pointer"
@@ -121,7 +118,7 @@ const SingleListItem = ({ item }: { item?: Product }) => {
                   fill=""
                 />
               </svg>
-            </button>
+            </button> */}
           </div>
         </Link>
 
@@ -132,8 +129,8 @@ const SingleListItem = ({ item }: { item?: Product }) => {
             </h3>
 
             <span className="flex items-center gap-2 font-medium text-lg">
-              <span className="text-dark">RS: {item.discountedPrice}</span>
-              <span className="text-dark-4 line-through">RS: {item.price}</span>
+              <span className="text-dark">RS: {item.discountedPrice.toLocaleString()}</span>
+              <span className="text-dark-4 line-through">RS: {item.price.toLocaleString()}</span>
             </span>
           </div>
 

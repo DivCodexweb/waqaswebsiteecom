@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface SocialLinkItem {
   id: number;
@@ -114,7 +115,7 @@ const Footer = () => {
                     <path fillRule="evenodd" clipRule="evenodd" d="M4.25 8.51464C4.25 4.45264 7.77146 1.25 12 1.25C16.2285 1.25 19.75 4.45264 19.75 8.51464C19.75 12.3258 17.3871 16.8 13.5748 18.4292C12.574 18.8569 11.426 18.8569 10.4252 18.4292C6.61289 16.8 4.25 12.3258 4.25 8.51464ZM12 2.75C8.49655 2.75 5.75 5.38076 5.75 8.51464C5.75 11.843 7.85543 15.6998 11.0147 17.0499C11.639 17.3167 12.361 17.3167 12.9853 17.0499C16.1446 15.6998 18.25 11.843 18.25 8.51464C18.25 5.38076 15.5034 2.75 12 2.75ZM12 7.75C11.3096 7.75 10.75 8.30964 10.75 9C10.75 9.69036 11.3096 10.25 12 10.25C12.6904 10.25 13.25 9.69036 13.25 9C13.25 8.30964 12.6904 7.75 12 7.75ZM9.25 9C9.25 7.48122 10.4812 6.25 12 6.25C13.5188 6.25 14.75 7.48122 14.75 9C14.75 10.5188 13.5188 11.75 12 11.75C10.4812 11.75 9.25 10.5188 9.25 9ZM3.59541 14.9966C3.87344 15.3036 3.84992 15.7779 3.54288 16.0559C2.97519 16.57 2.75 17.0621 2.75 17.5C2.75 18.2637 3.47401 19.2048 5.23671 19.998C6.929 20.7596 9.31952 21.25 12 21.25C14.6805 21.25 17.071 20.7596 18.7633 19.998C20.526 19.2048 21.25 18.2637 21.25 17.5C21.25 17.0621 21.0248 16.57 20.4571 16.0559C20.1501 15.7779 20.1266 15.3036 20.4046 14.9966C20.6826 14.6895 21.1569 14.666 21.4639 14.9441C22.227 15.635 22.75 16.5011 22.75 17.5C22.75 19.2216 21.2354 20.5305 19.3788 21.3659C17.4518 22.2331 14.8424 22.75 12 22.75C9.15764 22.75 6.54815 22.2331 4.62116 21.3659C2.76457 20.5305 1.25 19.2216 1.25 17.5C1.25 16.5011 1.77305 15.635 2.53605 14.9441C2.84309 14.666 3.31738 14.6895 3.59541 14.9966Z" fill="#3C50E0" />
                   </svg>
                 </span>
-                685 Market Street, Las Vegas, LA 95820, United States.
+                Lahore, Punjab, Pakistan
               </li>
 
               <li>
@@ -122,7 +123,7 @@ const Footer = () => {
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path fillRule="evenodd" clipRule="evenodd" d="M4.7177 3.0919C5.94388 1.80096 7.9721 2.04283 8.98569 3.47641L10.2467 5.25989C11.0574 6.40656 10.9889 8.00073 10.0214 9.0194L9.7765 9.27719C9.77582 9.27897 9.7751 9.2809 9.77436 9.28299C9.76142 9.31935 9.7287 9.43513 9.7609 9.65489C9.82765 10.1104 10.1793 11.0361 11.607 12.5392C13.0391 14.0469 13.9078 14.4023 14.3103 14.4677C14.484 14.4959 14.5748 14.4714 14.6038 14.4612L15.0124 14.031C15.8862 13.111 17.2485 12.9298 18.347 13.5621L20.2575 14.6617C21.8904 15.6016 22.2705 17.9008 20.9655 19.2747L19.545 20.7703C19.1016 21.2371 18.497 21.6355 17.75 21.7092C15.9261 21.8893 11.701 21.6548 7.27161 16.9915C3.13844 12.64 2.35326 8.85513 2.25401 7.00591L2.92011 6.97016L2.25401 7.00591C2.20497 6.09224 2.61224 5.30855 3.1481 4.7444L4.7177 3.0919Z" fill="#3C50E0" />
                   </svg>
-                  (+099) 532-786-9843
+                  +92321-0410033
                 </a>
               </li>
 
@@ -131,7 +132,7 @@ const Footer = () => {
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path fillRule="evenodd" clipRule="evenodd" d="M9.94358 3.25H14.0564C15.8942 3.24998 17.3498 3.24997 18.489 3.40314C19.6614 3.56076 20.6104 3.89288 21.3588 4.64124C22.1071 5.38961 22.4392 6.33856 22.5969 7.51098C22.75 8.65019 22.75 10.1058 22.75 11.9436V12.0564C22.75 13.8942 22.75 15.3498 22.5969 16.489C22.4392 17.6614 22.1071 18.6104 21.3588 19.3588C20.6104 20.1071 19.6614 20.4392 18.489 20.5969C17.3498 20.75 15.8942 20.75 14.0564 20.75H9.94359C8.10583 20.75 6.65019 20.75 5.51098 20.5969C4.33856 20.4392 3.38961 20.1071 2.64124 19.3588C1.89288 18.6104 1.56076 17.6614 1.40314 16.489C1.24997 15.3498 1.24998 13.8942 1.25 12.0564V11.9436C1.24998 10.1058 1.24997 8.65019 1.40314 7.51098C1.56076 6.33856 1.89288 5.38961 2.64124 4.64124C3.38961 3.89288 4.33856 3.56076 5.51098 3.40314C6.65019 3.24997 8.10582 3.24998 9.94358 3.25Z" fill="#3C50E0" />
                   </svg>
-                  support@example.com
+                  support@hunttoget.com
                 </a>
               </li>
             </ul>
@@ -162,11 +163,11 @@ const Footer = () => {
               Account
             </h2>
             <ul className="flex flex-col gap-3.5">
-              <li><a className="ease-out duration-200 hover:text-blue" href="#">My Account</a></li>
-              <li><a className="ease-out duration-200 hover:text-blue" href="#">Login / Register</a></li>
-              <li><a className="ease-out duration-200 hover:text-blue" href="#">Cart</a></li>
-              <li><a className="ease-out duration-200 hover:text-blue" href="#">Wishlist</a></li>
-              <li><a className="ease-out duration-200 hover:text-blue" href="#">Shop</a></li>
+              <li><Link className="ease-out duration-200 hover:text-blue" href="/my-account">My Account</Link></li>
+              <li><Link className="ease-out duration-200 hover:text-blue" href="/signin">Login / Register</Link></li>
+              <li><Link className="ease-out duration-200 hover:text-blue" href="/cart">Cart</Link></li>
+              <li><Link className="ease-out duration-200 hover:text-blue" href="/brands">Brands</Link></li>
+              <li><Link className="ease-out duration-200 hover:text-blue" href="/shop">Shop</Link></li>
             </ul>
           </div>
 
@@ -175,11 +176,11 @@ const Footer = () => {
               Quick Link
             </h2>
             <ul className="flex flex-col gap-3">
-              <li><a className="ease-out duration-200 hover:text-blue" href="#">Privacy Policy</a></li>
-              <li><a className="ease-out duration-200 hover:text-blue" href="#">Refund Policy</a></li>
-              <li><a className="ease-out duration-200 hover:text-blue" href="#">Terms of Use</a></li>
-              <li><a className="ease-out duration-200 hover:text-blue" href="#">FAQ’s</a></li>
-              <li><a className="ease-out duration-200 hover:text-blue" href="#">Contact</a></li>
+              <li><Link className="ease-out duration-200 hover:text-blue" href="/privacy-policy">Privacy Policy</Link></li>
+              <li><Link className="ease-out duration-200 hover:text-blue" href="/returns-exchange">Refund Policy</Link></li>
+              <li><Link className="ease-out duration-200 hover:text-blue" href="/terms-conditions">Terms of Use</Link></li>
+              <li><Link className="ease-out duration-200 hover:text-blue" href="/faq">FAQ’s</Link></li>
+              <li><Link className="ease-out duration-200 hover:text-blue" href="/shipping-policy">Shipping Policy</Link></li>
             </ul>
           </div>
 
@@ -216,7 +217,7 @@ const Footer = () => {
         <div className="max-w-[1170px] mx-auto px-4 sm:px-8 xl:px-0">
           <div className="flex gap-5 flex-wrap items-center justify-between">
             <p className="text-dark font-medium">
-              &copy; {year}. All rights reserved by PimjoLabs.
+              &copy; {year}. All rights reserved by GetToHunt.
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <p className="font-medium">We Accept:</p>

@@ -1,31 +1,97 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Breadcrumb from "../Common/Breadcrumb";
-import Login from "./Login";
 import Shipping from "./Shipping";
 import ShippingMethod from "./ShippingMethod";
 import PaymentMethod from "./PaymentMethod";
 import Coupon from "./Coupon";
 import Billing from "./Billing";
+import { useAppSelector } from "@/redux/store";
+import { selectTotalPrice } from "@/redux/features/cart-slice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+// Agar clear cart action available ho toh import kar sakte hain:
+// import { clearCart } from "@/redux/features/cart-slice";
 
 const Checkout = () => {
+  const cartItems = useAppSelector((state) => state.cartReducer.items);
+  const totalPrice = useAppSelector(selectTotalPrice);
+  const dispatch = useDispatch<AppDispatch>();
+
+  // Form state for billing, shipping, and notes
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    companyName: "",
+    country: "",
+    address: "",
+    addressTwo: "",
+    town: "",
+    phone: "",
+    email: "",
+    notes: "",
+  });
+
+const handleOrderSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (cartItems.length === 0) {
+      alert("Your cart is empty!");
+      return;
+    }
+
+    const orderPayload = {
+      customerDetails: formData,
+      items: cartItems,
+      totalAmount: totalPrice,
+      createdAt: new Date().toISOString(),
+    };
+
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderPayload),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        console.log("Order Placed Successfully:", data);
+        // alert(`Order placed successfully! 🎉 Order ID: ${data.orderId}`);
+        
+      const orderData = {
+  orderId: data.orderId,
+  customerDetails: formData,
+  items: cartItems,
+  totalAmount: totalPrice,
+};
+localStorage.setItem("latestOrder", JSON.stringify(orderData));
+
+// Phir redirect kar dein:
+window.location.href = "/thank-you";
+      } else {
+        alert(data.message || "Failed to place order.");
+      }
+    } catch (error) {
+      console.error("Order submission failed:", error);
+      alert("Something went wrong. Please try again.");
+    }
+  };
   return (
     <>
       <Breadcrumb title={"Checkout"} pages={["checkout"]} />
       <section className="overflow-hidden py-20 bg-gray-2">
         <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
-          <form>
+          <form onSubmit={handleOrderSubmit}>
             <div className="flex flex-col lg:flex-row gap-7.5 xl:gap-11">
               {/* <!-- checkout left --> */}
               <div className="lg:max-w-[670px] w-full">
-                {/* <!-- login box --> */}
-                <Login />
-
                 {/* <!-- billing details --> */}
-                <Billing />
+                <Billing formData={formData} setFormData={setFormData} />
 
                 {/* <!-- address box two --> */}
-                <Shipping />
+                <Shipping formData={formData} setFormData={setFormData} />
 
                 {/* <!-- others note box --> */}
                 <div className="bg-white shadow-1 rounded-[10px] p-4 sm:p-8.5 mt-7.5">
@@ -38,14 +104,18 @@ const Checkout = () => {
                       name="notes"
                       id="notes"
                       rows={5}
-                      placeholder="Notes about your order, e.g. speacial notes for delivery."
+                      value={formData.notes}
+                      onChange={(e) =>
+                        setFormData({ ...formData, notes: e.target.value })
+                      }
+                      placeholder="Notes about your order, e.g. special notes for delivery."
                       className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full p-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
                     ></textarea>
                   </div>
                 </div>
               </div>
 
-              {/* // <!-- checkout right --> */}
+              {/* <!-- checkout right --> */}
               <div className="max-w-[455px] w-full">
                 {/* <!-- order list box --> */}
                 <div className="bg-white shadow-1 rounded-[10px]">
@@ -68,43 +138,38 @@ const Checkout = () => {
                       </div>
                     </div>
 
-                    {/* <!-- product item --> */}
-                    <div className="flex items-center justify-between py-5 border-b border-gray-3">
-                      <div>
-                        <p className="text-dark">iPhone 14 Plus , 6/128GB</p>
-                      </div>
-                      <div>
-                        <p className="text-dark text-right">$899.00</p>
-                      </div>
-                    </div>
+                    {/* <!-- dynamic cart items --> */}
+                    {cartItems.length > 0 ? (
+                      cartItems.map((item, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between py-5 border-b border-gray-3"
+                        >
+                          <div>
+                            <p className="text-dark">
+                              {item.title} {item.quantity > 1 && `(x${item.quantity})`}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-dark text-right">
+                              ${(item.discountedPrice || item.price) * item.quantity}
+                            </p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="py-4 text-center text-gray-500">
+                        Your cart is empty
+                      </p>
+                    )}
 
-                    {/* <!-- product item --> */}
-                    <div className="flex items-center justify-between py-5 border-b border-gray-3">
-                      <div>
-                        <p className="text-dark">Asus RT Dual Band Router</p>
-                      </div>
-                      <div>
-                        <p className="text-dark text-right">$129.00</p>
-                      </div>
-                    </div>
-
-                    {/* <!-- product item --> */}
-                    <div className="flex items-center justify-between py-5 border-b border-gray-3">
-                      <div>
-                        <p className="text-dark">Havit HV-G69 USB Gamepad</p>
-                      </div>
-                      <div>
-                        <p className="text-dark text-right">$29.00</p>
-                      </div>
-                    </div>
-
-                    {/* <!-- product item --> */}
+                    {/* <!-- shipping fee placeholder --> */}
                     <div className="flex items-center justify-between py-5 border-b border-gray-3">
                       <div>
                         <p className="text-dark">Shipping Fee</p>
                       </div>
                       <div>
-                        <p className="text-dark text-right">$15.00</p>
+                        <p className="text-dark text-right">$0.00</p>
                       </div>
                     </div>
 
@@ -115,7 +180,7 @@ const Checkout = () => {
                       </div>
                       <div>
                         <p className="font-medium text-lg text-dark text-right">
-                          $1072.00
+                          ${totalPrice}
                         </p>
                       </div>
                     </div>
@@ -134,9 +199,9 @@ const Checkout = () => {
                 {/* <!-- checkout button --> */}
                 <button
                   type="submit"
-                  className="w-full flex justify-center font-medium text-white bg-blue py-3 px-6 rounded-md ease-out duration-200 hover:bg-blue-dark mt-7.5"
+                  className="w-full flex justify-center font-medium text-white bg-blue py-3 px-6 rounded-md ease-out duration-200 hover:bg-blue-dark mt-7.5 cursor-pointer"
                 >
-                  Process to Checkout
+                  Place Order
                 </button>
               </div>
             </div>

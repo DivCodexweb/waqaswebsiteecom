@@ -4,7 +4,20 @@ import { products } from "@/db/schema";
 import Breadcrumb from "@/components/Common/Breadcrumb";
 import ProductListing from "@/components/Shop/ProductListing";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Product Categories | GetToHunt - Browse Collections",
+  description: "Explore all product categories at GetToHunt. Find the best footwear styles, casual shoes, formal wear, and accessories tailored for you.",
+  keywords: ["GetToHunt categories", "Footwear categories Pakistan", "Shop shoes by category GetToHunt"],
+  openGraph: {
+    title: "Product Categories | GetToHunt",
+    description: "Explore all product categories and collections available at GetToHunt.",
+    url: "https://gettohunt.com/categories",
+    siteName: "GetToHunt",
+    type: "website",
+  },
+};
 type PageProps = {
   params: Promise<{ categoryId: string; subcategoryId: string }>;
 };

@@ -12,7 +12,7 @@ const Dropdown = ({ menuItem, stickyMenu }: { menuItem: any; stickyMenu?: boolea
       <button
         onClick={() => setDropdownToggler(!dropdownToggler)}
         className={`flex items-center justify-between gap-1.5 py-3 text-custom-sm font-medium ${
-          stickyMenu ? "text-dark" : "text-white"
+          stickyMenu ? "text-dark" : "text-dark"
         } hover:text-blue w-full`}
       >
         {menuItem?.title || "Menu"}

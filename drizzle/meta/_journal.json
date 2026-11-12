@@ -64,6 +64,20 @@
       "when": 1793804744529,
       "tag": "0008_massive_firebrand",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1794502949546,
+      "tag": "0009_workable_punisher",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1794503305915,
+      "tag": "0010_tricky_tyrannus",
+      "breakpoints": true
     }
   ]
 }

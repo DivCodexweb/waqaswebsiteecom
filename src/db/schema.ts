@@ -105,14 +105,6 @@ export const products = sqliteTable('products', {
   reviews: integer('reviews').notNull().default(0),
 });
 
-// 3. Blog Items Table
-export const blogItems = sqliteTable('blog_items', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  title: text('title').notNull(),
-  date: text('date').notNull(),
-  views: integer('views').notNull().default(0),
-  img: text('img').notNull(),
-});
 
 // 4. Testimonials Table
 export const testimonials = sqliteTable('testimonials', {
@@ -130,4 +122,35 @@ export const menus = sqliteTable('menus', {
   path: text('path'),
   newTab: integer('new_tab', { mode: 'boolean' }).notNull().default(false),
   parentId: integer('parent_id'), // Nested Submenu structure ke liye (references menus.id)
+});
+// Orders Table (Same as before)
+export const orders = sqliteTable("orders", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  companyName: text("company_name"),
+  country: text("country").notNull(),
+  address: text("address").notNull(),
+  addressTwo: text("address_two"),
+  town: text("town").notNull(),
+  phone: text("phone").notNull(),
+  email: text("email").notNull(),
+  notes: text("notes"),
+  totalAmount: real("total_amount").notNull(),
+  status: text("status").notNull().default("pending"),
+  createdAt: text("created_at").notNull(),
+});
+
+// Updated Order Items Table (Attributes aur Image ke sath)
+export const orderItems = sqliteTable("order_items", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  orderId: integer("order_id")
+    .notNull()
+    .references(() => orders.id, { onDelete: "cascade" }),
+  productId: integer("product_id").notNull(),
+  title: text("title").notNull(),
+  price: real("price").notNull(),
+  quantity: integer("quantity").notNull(),
+  image: text("image"), // Product ki image URL save karne ke liye
+  selectedAttributes: text("selected_attributes"), // JSON string (e.g. '{"Color": "Black", "Size": "Medium"}')
 });

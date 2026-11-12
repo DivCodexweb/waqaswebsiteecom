@@ -66,9 +66,9 @@ const SingleItem = ({ item }: { item: Product }) => {
           </h3>
 
           <span className="flex items-center justify-center gap-2 font-medium text-lg">
-            <span className="text-dark">${item.discountedPrice || item.price}</span>
+            <span className="text-dark">RS {(item.discountedPrice?.toLocaleString() || item.price?.toLocaleString())}</span>
             {item.discountedPrice && item.discountedPrice < item.price && (
-              <span className="text-dark-4 line-through">${item.price}</span>
+              <span className="text-dark-4 line-through">RS {item.price.toLocaleString()}</span>
             )}
           </span>
         </div>
@@ -118,23 +118,23 @@ const SingleItem = ({ item }: { item: Product }) => {
             </svg>
           </button> */}
 
-          <button
-            onClick={() => handleAddToCart()}
+          <Link
+           href={`/shop/${item.id}`} 
             aria-label="button for add to cart"
             id="addCartOne"
             className="flex items-center justify-center w-9 h-9 rounded-[5px] shadow-1 ease-out duration-200 text-dark bg-white hover:text-white hover:bg-blue cursor-pointer"
           >
             🛒
-          </button>
+          </Link>
 
-          <button
+          {/* <button
             onClick={() => handleItemToWishList()}
             aria-label="button for add to fav"
             id="addFavOne"
             className="flex items-center justify-center w-9 h-9 rounded-[5px] shadow-1 ease-out duration-200 text-dark bg-white hover:text-white hover:bg-blue cursor-pointer"
           >
             ❤️
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
