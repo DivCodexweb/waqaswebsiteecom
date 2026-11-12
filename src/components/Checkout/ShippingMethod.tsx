@@ -35,7 +35,7 @@ const ShippingMethod = () => {
             Free Shipping
           </label>
 
-          <label
+          {/* <label
             htmlFor="fedex"
             className="flex cursor-pointer select-none items-center gap-3.5"
           >
@@ -113,7 +113,7 @@ const ShippingMethod = () => {
                 </div>
               </div>
             </div>
-          </label>
+          </label> */}
         </div>
       </div>
     </div>

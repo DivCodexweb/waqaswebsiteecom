@@ -152,7 +152,7 @@ window.location.href = "/thank-you";
                           </div>
                           <div>
                             <p className="text-dark text-right">
-                              ${(item.discountedPrice || item.price) * item.quantity}
+                              Rs {((item.discountedPrice ?? item.price) * item.quantity).toLocaleString()}
                             </p>
                           </div>
                         </div>
@@ -169,7 +169,7 @@ window.location.href = "/thank-you";
                         <p className="text-dark">Shipping Fee</p>
                       </div>
                       <div>
-                        <p className="text-dark text-right">$0.00</p>
+                        <p className="text-dark text-right">RS 0.00</p>
                       </div>
                     </div>
 
@@ -180,7 +180,7 @@ window.location.href = "/thank-you";
                       </div>
                       <div>
                         <p className="font-medium text-lg text-dark text-right">
-                          ${totalPrice}
+                          RS {totalPrice.toLocaleString()}
                         </p>
                       </div>
                     </div>

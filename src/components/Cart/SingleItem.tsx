@@ -92,7 +92,7 @@ const SingleItem = ({ item }: { item: any }) => {
       </div>
 
       <div className="min-w-[180px]">
-        <p className="text-dark">${item.discountedPrice || item.price}</p>
+        <p className="text-dark">RS {((item.discountedPrice ?? item.price).toLocaleString())}</p>
       </div>
 
       <div className="min-w-[275px]">
@@ -148,7 +148,7 @@ const SingleItem = ({ item }: { item: any }) => {
       </div>
 
       <div className="min-w-[200px]">
-        <p className="text-dark font-semibold">${(item.discountedPrice || item.price) * quantity}</p>
+        <p className="text-dark font-semibold">RS {((item.discountedPrice ?? item.price) * quantity).toLocaleString()}</p>
       </div>
 
       <div className="min-w-[50px] flex justify-end">

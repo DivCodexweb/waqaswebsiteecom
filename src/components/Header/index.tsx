@@ -268,7 +268,7 @@ const Header = () => {
       cart
     </span>
     <p className="font-medium text-custom-sm text-dark">
-      RS {totalPrice}
+      RS {totalPrice.toLocaleString()}
     </p>
   </div>
 </button>

@@ -91,7 +91,7 @@ const PaymentMethod = () => {
             </div>
           </label>
 
-          <label
+          {/* <label
             htmlFor="paypal"
             className="flex cursor-pointer select-none items-center gap-4"
           >
@@ -128,7 +128,7 @@ const PaymentMethod = () => {
                 </div>
               </div>
             </div>
-          </label>
+          </label> */}
         </div>
       </div>
     </div>

@@ -188,9 +188,6 @@ const Footer = () => {
             <h2 className="mb-7.5 text-custom-1 font-medium text-dark lg:text-right">
               Download App
             </h2>
-            <p className="lg:text-right text-custom-sm mb-4">
-              Save $3 With App & New User only
-            </p>
             <ul className="flex flex-col lg:items-end gap-3">
               <li>
                 <a className="inline-flex items-center gap-3 py-[9px] pl-4 pr-7.5 text-white rounded-md bg-dark ease-out duration-200 hover:bg-opacity-95" href="#">

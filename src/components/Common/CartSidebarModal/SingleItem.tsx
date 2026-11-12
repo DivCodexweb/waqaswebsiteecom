@@ -49,7 +49,7 @@ const SingleItem = ({ item, removeItemFromCart }: { item: any; removeItemFromCar
             </div>
           )}
 
-          <p className="text-custom-sm">Qty: {item.quantity || 1} × <strong className="text-dark">${item.discountedPrice || item.price}</strong></p>
+          <p className="text-custom-sm">Qty: {item.quantity || 1} × <strong className="text-dark">RS { (item.discountedPrice || item.price).toLocaleString() }</strong></p>
         </div>
       </div>
 

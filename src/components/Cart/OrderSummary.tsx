@@ -2,6 +2,7 @@ import { selectTotalPrice } from "@/redux/features/cart-slice";
 import { useAppSelector } from "@/redux/store";
 import React from "react";
 import { useSelector } from "react-redux";
+import Link from "next/link"; // Next.js Link import kiya
 
 const OrderSummary = () => {
   const cartItems = useAppSelector((state) => state.cartReducer.items);
@@ -34,7 +35,7 @@ const OrderSummary = () => {
               </div>
               <div>
                 <p className="text-dark text-right">
-                  ${item.discountedPrice * item.quantity}
+                  RS {((item.discountedPrice ?? item.price) * item.quantity).toLocaleString()}
                 </p>
               </div>
             </div>
@@ -47,18 +48,18 @@ const OrderSummary = () => {
             </div>
             <div>
               <p className="font-medium text-lg text-dark text-right">
-                ${totalPrice}
+                RS {totalPrice.toLocaleString()}
               </p>
             </div>
           </div>
 
-          {/* <!-- checkout button --> */}
-          <button
-            type="submit"
+          {/* <!-- checkout button wrapped in Next.js Link --> */}
+          <Link
+            href="/checkout"
             className="w-full flex justify-center font-medium text-white bg-blue py-3 px-6 rounded-md ease-out duration-200 hover:bg-blue-dark mt-7.5"
           >
             Process to Checkout
-          </button>
+          </Link>
         </div>
       </div>
     </div>
