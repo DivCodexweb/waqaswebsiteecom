@@ -277,9 +277,9 @@ const handleAddToCart = () => {
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <span className="text-3xl font-extrabold text-dark">${product.discountedPrice || product.price}</span>
+                  <span className="text-3xl font-extrabold text-dark">RS {product.discountedPrice || product.price}</span>
                   {product.discountedPrice && product.discountedPrice < product.price && (
-                    <span className="text-lg text-dark-4 line-through">${product.price}</span>
+                    <span className="text-lg text-dark-4 line-through">RS {product.price.toLocaleString()}</span>
                   )}
                 </div>
 
